@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juno Eclipse: The Infinite Nexus Sabotage</title>
+    <!-- Load Tailwind CSS CDN - THIS IS THE MOST LIKELY LINE TO BE STRIPPED BY WORDPRESS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* --- Custom CSS for The Juno Eclipse Game --- */
+        /* --- Global Variables & Resets --- */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+
+        :root {
+            --color-primary: #8b5cf6; /* Violet */
+            --color-secondary: #000000;
+            --color-background: #1f2937; /* Dark Slate - Game box background */
+            --color-card-bg: #f3f4f6;
+            --color-card-border: #d1d5db;
+            --color-text: #ffffff;
+            --color-success: #34d399; /* Emerald Green */
+            --color-warning: #fcd34d;
+            --color-error: #ef4444; /* Red */
+            --color-temporal: #f472b6; /* Pink for Stability */
+        }
+
+        /* --- WP Safety: Apply global styles directly to the game container's parent
+           to avoid conflicts with the theme's <body> tag. */
+        #game-outer-wrapper {
+            background-color: #0d1117; /* Dark background */
+            font-family: 'Inter', sans-serif;
+            /* Ensures it doesn't just span the small WP content box, but the width available */
+            width: 100%;
+            padding: 20px 0;
+            position: relative; 
+            z-index: 10;
+        }
+
+        #game-container-wp {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--color-background);
+            color: var(--color-text);
+            border-radius: 12px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7);
+        }
+
+        #game-container-wp h1 {
+            text-align: center;
+            color: var(--color-primary);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-shadow: 0 0 5px rgba(139, 92, 246, 0.7);
+        }
+
+        /* --- Status Bar --- */
+        .status-block {
+            background-color: #374151;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+            border: 1px solid #4b5563;
+        }
+
+        /* --- Mode Selection --- */
+        #mode-selection button {
+            padding: 8px 15px;
+            border-radius: 9999px; 
+            border: 2px solid var(--color-primary);
+            background-color: transparent;
+            color: var(--color-text);
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 0 5px;
+            font-weight: 600;
+            user-select: none;
+        }
+
+        #mode-selection button:hover:not(.selected-mode) {
+            background-color: rgba(139, 92, 246, 0.15);
+        }
+
+        #mode-selection button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+
+        #mode-selection button.selected-mode {
+            background-color: var(--color-primary);
+            border-color: #c4b5fd;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+        }
+
+        /* --- Story History --- */
+        #story-history {
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #4b5563;
+            border-radius: 8px;
+            background-color: #2c3545;
+        }
+
+        #story-history::-webkit-scrollbar { width: 8px; }
+        #story-history::-webkit-scrollbar-thumb { background: #525252; border-radius: 10px; }
+        #story-history::-webkit-scrollbar-track { background: #1f2937; }
+
+        .history-result { padding: 5px; border-left: 4px solid var(--color-primary); background-color: #374151; }
+
+        .msg-info { color: #9ca3af; font-style: italic; }
+        .msg-success { color: var(--color-success); font-weight: bold; }
+        .msg-warning { color: var(--color-warning); font-weight: bold; }
+        .msg-error { color: var(--color-error); font-weight: bold; }
+        .msg-synergy { color: #5eead4; }
+
+        /* --- Black Card --- */
+        .black-card {
+            background-color: var(--color-secondary);
+            color: var(--color-text);
+            padding: 20px;
+            border-radius: 8px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+        }
+
+        .black-card .text-red {
+            color: var(--color-error);
+        }
+
+        .required-cards-info {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        .game-over-display {
+            background-color: #2c3545 !important;
+            border: 3px solid var(--color-error);
+            text-align: center;
+            justify-content: center;
+            color: var(--color-text) !important;
+            padding: 30px !important;
+        }
+
+        .end-game-message {
+            font-size: 1.5rem;
+            color: var(--color-error);
+        }
+
+        /* --- White Cards --- */
+        .white-card {
+            background-color: var(--color-card-bg);
+            color: var(--color-secondary);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--color-card-border);
+            flex: 1 1 calc(33.333% - 10px);
+            min-width: 150px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            user-select: none;
+        }
+
+        .white-card:hover {
+            box-shadow: 0 4px 10px var(--color-primary);
+            transform: translateY(-2px);
+        }
+
+        .white-card.selected {
+            border: 3px solid var(--color-primary);
+            background-color: #e0f2fe;
+            box-shadow: 0 0 15px var(--color-primary);
+        }
+
+        /* Submission Cards should not be interactive */
+        .submission-card {
+            cursor: default;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .card-theme-tag {
+            font-size: 0.7rem;
+            color: #6b7280;
+            text-align: right;
+            margin-top: 8px;
+            border-top: 1px dashed #e5e7eb;
+            padding-top: 5px;
+        }
+
+        /* Action Button Styling */
+        .choice-button:disabled, .play-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+
+        /* Responsive Adjustments (Mobile First) */
+        @media (max-width: 600px) {
+            #game-container-wp {
+                padding: 10px;
+            }
+
+            .white-card {
+                flex: 1 1 calc(50% - 10px); /* Two cards per row on mobile */
+                min-width: 100px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+            .choice-button {
+                width: 100%;
+                margin: 5px 0 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Outer Wrapper for WP Background Isolation -->
+    <div id="game-outer-wrapper">
+        <!-- Main Game Container -->
+        <div id="game-container-wp" class="mx-auto p-4 md:p-8">
+            <h1>Juno Eclipse: The Infinite Nexus Sabotage</h1>
+            
+            <div id="mode-selection" class="text-center mb-4 flex justify-center space-x-4">
+                <button id="mode-solo" class="selected-mode">Solo Mode</button>
+                <button id="mode-vs-computer">Vs. Computer Mode</button>
+            </div>
+
+            <!-- Status Bar -->
+            <div id="status-bar" class="flex flex-col md:flex-row justify-between gap-3 mb-6">
+                <div class="status-block flex-1">
+                    <h3>Juno Eclipse (You)</h3>
+                    <div class="status-item text-sm">Chapter: <span id="chapter-count" class="font-mono text-lg text-yellow-300">0</span></div>
+                    <div class="status-item text-sm">Hull Integrity: <span id="human-health-stat" class="font-mono text-lg">100%</span></div>
+                    <div class="status-item text-sm">Rebel Standing: <span id="human-standing-stat" class="font-mono text-lg">60</span></div>
+                    <div class="status-item text-sm">Stability: <span id="human-stability-stat" class="status-temporal font-mono text-lg">100%</span></div>
+                </div>
+                <div class="status-block hidden flex-1" id="computer-stats">
+                    <h3>The Nexus AI (Opponent)</h3>
+                    <div class="status-item text-sm">Hull Integrity: <span id="computer-health-stat" class="font-mono text-lg">100%</span></div>
+                    <div class="status-item text-sm">Control Standing: <span id="computer-standing-stat" class="font-mono text-lg">60</span></div>
+                    <div class="status-item text-sm">Stability: <span id="computer-stability-stat" class="font-mono text-lg">100%</span></div>
+                </div>
+            </div>
+            
+            <!-- Story History -->
+            <div id="story-history" class="mb-6 text-sm">
+                <p class="history-text-center msg-info">Initializing temporal relay...</p>
+            </div>
+
+            <!-- Card Area -->
+            <div id="card-area">
+                <div id="black-card-display" class="black-card mb-4">
+                    <span id="black-card-text" class="text-center font-bold text-lg">Select a mode and start the campaign.</span>
+                </div>
+                
+                <div id="submission-area" class="hidden mb-4">
+                    <h2 class="hand-title text-yellow-300 mb-2 font-bold">Winning Submission: <span id="winning-player"></span></h2>
+                    <div id="human-submission" class="flex flex-wrap gap-2"></div>
+                    <h2 class="hand-title text-yellow-300 mt-4 mb-2 font-bold hidden" id="losing-submission-title">Losing Submission: <span id="losing-player"></span></h2>
+                    <div id="computer-submission" class="flex flex-wrap gap-2"></div>
+                </div>
+
+                <h2 id="hand-title" class="hand-title text-yellow-300 font-bold">Your Hand (<span id="hand-count">0</span> Cards)</h2>
+                <div id="hand-area" class="flex flex-wrap gap-2 mb-4"></div>
+                
+                <button id="play-card-btn" class="play-button bg-violet-600 hover:bg-violet-700 text-white w-full py-3 mb-4 rounded-lg shadow-lg" disabled>
+                    Play Chosen Card(s)
+                </button>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="action-buttons flex justify-between gap-3 mt-6">
+                <button id="start-game-btn" class="choice-button bg-green-600 hover:bg-green-700 text-white flex-1 py-3 rounded-lg shadow-md">
+                    Start New Campaign
+                </button>
+                <button id="reset-game-btn" class="choice-button reset-button bg-red-600 hover:bg-red-700 text-white flex-1 py-3 rounded-lg shadow-md" disabled>
+                    Restart Campaign
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript Logic -->
+    <script>
+        // Use an IIFE for better scope encapsulation
+        (function() {
+            // Define colors used in dynamic styling for maximum stability
+            const DYNAMIC_COLORS = {
+                temporal: '#f472b6', 
+                error: '#ef4444', 
+                warning: '#fcd34d',
+                success: '#34d399'
+            };
+
+            const CAH_DATA = {
+                blackCards: [
+                    { text: "Juno, your hyperspace jump ripped you through the veil, depositing you in the middle of a **Klingon** ritual where the prize was [BLANK].", blanks: 1, theme: 'ST' }, 
+                    { text: "The only way to close the Stargate before the **Goa'uld** invasion is to use [BLANK] as a makeshift power source.", blanks: 1, theme: 'SG' }, 
+                    { text: "We need to fix the **Enterprise-D's** holodeck malfunction, which has resulted in a crisis involving [BLANK].", blanks: 1, theme: 'ST' }, 
+                    { text: "Darth Vader's emotional breakdown was triggered by the sight of [BLANK].", blanks: 1, theme: 'SW' },
+                    { text: "The **Doctor**'s primary concern in this crisis is the proper application of [BLANK].", blanks: 1, theme: 'WHO' },
+                    { text: "The **Borg** Cube's shield frequency can only be modulated by shouting [BLANK] at maximum volume.", blanks: 1, theme: 'ST' },
+                    { text: "The **Citadel Council** determined the solution to the **Reapers** was simply [BLANK].", blanks: 1, theme: 'ME' },
+                    { text: "The Ancient database revealed that the secret to ascending was actually [BLANK].", blanks: 1, theme: 'SG' },
+                    { text: "The political campaign to elect the next supreme intelligence of the **Omni-verse** centered entirely on [BLANK].", blanks: 1, theme: 'WHO' },
+                    { text: "A **Xenomorph** queen was found performing a cabaret act involving [BLANK].", blanks: 1, theme: 'ALIEN' },
+                    { text: "The worst thing about the **Zerg** swarm isn't the acid, it's [BLANK].", blanks: 1, theme: 'SC' },
+                    { text: "The **TARDIS** has disguised itself as [BLANK] and is now stuck in the **Corellian** Sector.", blanks: 1, theme: 'WHO' },
+                    { text: "The *true* purpose of the Death Star was to house [BLANK].", blanks: 1, theme: 'SW' },
+                    { text: "The **Predator** broke its code of honor for a chance at [BLANK].", blanks: 1, theme: 'ALIEN' },
+                    { text: "Juno realized the gravity drive malfunction was caused by [BLANK] on the control panel.", blanks: 1, theme: 'SW' },
+                    { text: "Juno, the only way to appease the **Elder Gods** is to sacrifice [BLANK] while simultaneously singing a ballad about [BLANK].", blanks: 2, theme: 'LOVECRAFT' },
+                    { text: "To gain passage through **Reaver** territory, Serenity's captain insisted on gifting them [BLANK] and distracting them with [BLANK].", blanks: 2, theme: 'FIREFLY' },
+                    { text: "The **Borg**'s assimilation process now requires the drone to first experience the profound disappointment of [BLANK] followed by the crushing reality of [BLANK].", blanks: 2, theme: 'ST' },
+                ],
+                whiteCards: [
+                    { text: "Jar Jar Binks' emotional support Tribble.", absurdity: 5, theme: 'SW' },
+                    { text: "Sarlacc Pit breath mints.", absurdity: 4, theme: 'SW' },
+                    { text: "A Zero Point Module powering a waffle iron.", absurdity: 5, theme: 'SG' },
+                    { text: "Darth Vader's collection of porcelain dolls.", absurdity: 3, theme: 'SW' },
+                    { text: "An entire crate of redundant red shirts.", absurdity: 3, theme: 'ST' },
+                    { text: "A bucket of highly-concentrated, anti-gravity lubricant.", absurdity: 4, theme: 'FIREFLY' },
+                    { text: "The crushing realization that all our problems stem from poor resource management.", absurdity: 1, theme: 'CANON' },
+                    { text: "A tiny pair of plastic hands.", absurdity: 4, theme: 'RANDOM' },
+                    { text: "A rogue Gonk Droid with a caffeine addiction.", absurdity: 3, theme: 'SW' },
+                    { text: "A Volus wearing a tiny sombrero.", absurdity: 5, theme: 'ME' },
+                    { text: "Commander Shepard trying to romance a Krogan.", absurdity: 4, theme: 'ME' },
+                    { text: "A **Dalek** stuck on a surprisingly short flight of stairs.", absurdity: 1, theme: 'WHO' },
+                    { text: "A Sandworm covered in glitter.", absurdity: 5, theme: 'DUNE' },
+                    { text: "The Doctor's Sonic Screwdriver attempting to fix a broken heart.", absurdity: 3, theme: 'WHO' },
+                    { text: "Jayne's favorite knitted hat, now sentient.", absurdity: 4, theme: 'FIREFLY' },
+                    { text: "The only surviving VHS copy of *The Holiday Special*.", absurdity: 4, theme: 'SW' },
+                    { text: "Garrus Vakarian's extremely detailed calibration schedule.", absurdity: 1, theme: 'ME' },
+                    { text: "A **Cyberman** debating the ethics of upgrading human plumbing.", absurdity: 3, theme: 'WHO' },
+                    { text: "A perfectly formed, yet extremely rude, potato.", absurdity: 5, theme: 'RANDOM' },
+                    { text: "The awkward moment when you realize you're the bad guy.", absurdity: 2, theme: 'CANON' },
+                    { text: "Two bros chillin' in a hot tub, five feet apart 'cause they're not gay.", absurdity: 5, theme: 'RANDOM' },
+                    { text: "The terrifying truth behind the Great Link's Wi-Fi signal.", absurdity: 4, theme: 'ST' },
+                    { text: "A tiny, aggressive ferret wearing full Mandalorian armor.", absurdity: 5, theme: 'SW' },
+                    { text: "T'ealc's secret weakness: reality TV marathons.", absurdity: 2, theme: 'SG' },
+                    { text: "The sudden, inexplicable appearance of Kenny G.", absurdity: 3, theme: 'RANDOM' },
+                    { text: "A vial of concentrated angst from a teenage alien.", absurdity: 2, theme: 'ST' },
+                    { text: "The blueprints for a fully functional, yet extremely sad, robot.", absurdity: 1, theme: 'CANON' },
+                ],
+                HAND_SIZE: 7, 
+            };
+
+            // --- Game State and Initialization ---
+            const INITIAL_STATE = {
+                history: [],
+                humanStanding: 60,
+                humanHealth: 100,
+                humanStability: 100, 
+                humanHand: [],
+                computerStanding: 60,
+                computerHealth: 100,
+                computerStability: 100, 
+                gameMode: 'solo', // Default set by initial UI state
+                currentChapter: 0,
+                isGameOver: false,
+                blackCard: null,
+                selectedCards: [], 
+                deck: [], 
+                usedBlackCardTexts: []
+            };
+
+            let gameState = { ...INITIAL_STATE }; 
+
+            // --- DOM Elements ---
+            const storyHistoryEl = document.getElementById('story-history');
+            const blackCardDisplayEl = document.getElementById('black-card-display');
+            const blackCardTextEl = document.getElementById('black-card-text');
+            const handAreaEl = document.getElementById('hand-area');
+            const playCardBtn = document.getElementById('play-card-btn');
+            const resetButtonEl = document.getElementById('reset-game-btn');
+            const startGameButtonEl = document.getElementById('start-game-btn');
+            const chapterCountEl = document.getElementById('chapter-count');
+
+            const submissionAreaEl = document.getElementById('submission-area');
+            const humanSubmissionEl = document.getElementById('human-submission');
+            const computerSubmissionEl = document.getElementById('computer-submission');
+            const losingSubmissionTitleEl = document.getElementById('losing-submission-title');
+            const winningPlayerEl = document.getElementById('winning-player');
+            const losingPlayerEl = document.getElementById('losing-player');
+
+            const humanStandingStatEl = document.getElementById('human-standing-stat');
+            const humanHealthStatEl = document.getElementById('human-health-stat');
+            const humanStabilityStatEl = document.getElementById('human-stability-stat');
+            const handCountEl = document.getElementById('hand-count');
+
+            const computerStatsEl = document.getElementById('computer-stats');
+            const computerStandingStatEl = document.getElementById('computer-standing-stat');
+            const computerHealthStatEl = document.getElementById('computer-health-stat');
+            const computerStabilityStatEl = document.getElementById('computer-stability-stat');
+
+            const modeSoloBtn = document.getElementById('mode-solo');
+            const modeVsComputerBtn = document.getElementById('mode-vs-computer');
+
+            let isTurnProcessing = false;
+
+
+            // --- Helper Functions ---
+            const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+            const capValue = (value) => Math.min(100, Math.max(0, value));
+
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
+            
+            function toggleGameControls(disabled) {
+                // Mode buttons are only enabled *before* a campaign starts or *after* it ends
+                modeSoloBtn.disabled = gameState.currentChapter > 0;
+                modeVsComputerBtn.disabled = gameState.currentChapter > 0;
+                
+                // Start/Reset buttons
+                startGameButtonEl.disabled = false;
+                resetButtonEl.disabled = gameState.currentChapter === 0;
+                
+                // Play button is tied to selection, but disabled if turn is processing
+                const required = gameState.blackCard?.blanks || 1;
+                playCardBtn.disabled = disabled || gameState.selectedCards.length < required;
+            }
+
+            // --- Initialization ---
+            function initializeGame() {
+                // Determine the current mode from the UI buttons
+                const currentMode = modeVsComputerBtn.classList.contains('selected-mode') ? 'vs-computer' : 'solo';
+                
+                gameState = { ...INITIAL_STATE, gameMode: currentMode }; 
+                gameState.currentChapter = 0; // Ensure chapter is reset
+
+                // Aggressive UI Reset
+                submissionAreaEl.classList.add('hidden'); 
+                humanSubmissionEl.innerHTML = '';
+                computerSubmissionEl.innerHTML = '';
+                losingSubmissionTitleEl.classList.add('hidden'); 
+                handAreaEl.innerHTML = '';
+                
+                gameState.blackCard = null; 
+                renderBlackCard(); 
+                
+                // Button Visibility/State
+                startGameButtonEl.style.display = 'block';
+                playCardBtn.style.display = 'block';
+                
+                isTurnProcessing = false;
+                gameState.isGameOver = false; // Reset game over flag
+
+                storyHistoryEl.innerHTML = `<p class="history-text-center msg-info">Welcome, Captain Juno Eclipse. Current Mode: **${currentMode === 'solo' ? 'Solo' : 'Vs. Computer'}**. Click **"Start New Campaign"** to begin.</p>`;
+
+                updateStats();
+                toggleGameControls(false); 
+            }
+
+            // --- Game Logic Functions ---
+
+            function startNewGame() {
+                if (isTurnProcessing || gameState.currentChapter > 0) return;
+
+                // 1. Setup Initial State (Reset)
+                const selectedMode = modeVsComputerBtn.classList.contains('selected-mode') ? 'vs-computer' : 'solo';
+
+                gameState = { 
+                    ...INITIAL_STATE, 
+                    gameMode: selectedMode, 
+                    deck: [...CAH_DATA.whiteCards],
+                    usedBlackCardTexts: []
+                };
+                shuffleArray(gameState.deck);
+                
+                // 2. Lock UI & Reset Visuals
+                isTurnProcessing = false;
+                submissionAreaEl.classList.add('hidden');
+                
+                // 3. Draw & Start Turn 1
+                const introText = gameState.gameMode === 'vs-computer' 
+                    ? "Campaign initiated against **The Nexus AI**. Defeat its logic core!"
+                    : "Solo Campaign initiated. The fate of the multiverse rests on your chaotic genius.";
+                
+                gameState.history = [{ role: "model", text: introText }];
+                
+                // Update stats early to ensure the computer panel is visible if needed
+                updateStats(); 
+                
+                drawHand(gameState.humanHand);
+                if (gameState.gameMode === 'vs-computer') {
+                    gameState.computerHand = []; // Initialize computer hand
+                    drawHand(gameState.computerHand);
+                }
+
+                drawBlackCard();
+                
+                gameState.selectedCards = [];
+                
+                renderGame();
+                
+                // Lock mode buttons and enable reset
+                toggleGameControls(false); 
+                startGameButtonEl.style.display = 'none';
+            }
+
+            function drawHand(hand) {
+                while (hand.length < CAH_DATA.HAND_SIZE) {
+                    if (gameState.deck.length === 0) {
+                        gameState.deck = [...CAH_DATA.whiteCards];
+                        shuffleArray(gameState.deck);
+                        gameState.history.push({role: "result", text: `<p class="msg-info">White Card inventory exhausted. Recycling all cards across the Nexus. Draw power restored.</p>`});
+                    }
+                    const card = gameState.deck.pop();
+                    if (card) {
+                        hand.push(card);
+                    } else {
+                        break;
+                    }
+                }
+            }
+
+            function drawBlackCard() {
+                gameState.currentChapter++;
+                
+                let availableCards = CAH_DATA.blackCards.filter(card => !gameState.usedBlackCardTexts.includes(card.text));
+                
+                if (availableCards.length === 0) {
+                    gameState.usedBlackCardTexts = [];
+                    availableCards = CAH_DATA.blackCards; 
+                    gameState.history.push({role: "result", text: `<p class="msg-info">The Black Card mission file was fully exhausted. Recycling all mission parameters. The campaign continues!</p>`});
+                }
+
+                gameState.blackCard = getRandom(availableCards); 
+                gameState.blackCard.blanks = gameState.blackCard.blanks || 1;
+                gameState.usedBlackCardTexts.push(gameState.blackCard.text);
+                
+                gameState.history.push({
+                    role: "model",
+                    blackCard: gameState.blackCard,
+                    text: `**CHAPTER ${gameState.currentChapter}**: A new crisis rips open the multiverse, requiring a **${gameState.blackCard.theme || 'CANON'}** response.`
+                });
+            }
+
+            function selectCard(card) {
+                if (gameState.isGameOver || !gameState.blackCard || isTurnProcessing) return;
+                const required = gameState.blackCard.blanks || 1;
+                
+                // Check if the card is actually in the human hand
+                if (!gameState.humanHand.some(c => c.text === card.text)) return; 
+
+                const isCurrentlySelected = gameState.selectedCards.some(c => c.text === card.text);
+
+                if (isCurrentlySelected) {
+                    gameState.selectedCards = gameState.selectedCards.filter(c => c.text !== card.text);
+                } else {
+                    if (gameState.selectedCards.length < required) {
+                        gameState.selectedCards.push(card);
+                    } else if (required === 1) {
+                        // Replace the currently selected card
+                        gameState.selectedCards = [card];
+                    } else {
+                        // For multiple blanks, FIFO: remove the oldest, add the new one.
+                        gameState.selectedCards.shift();
+                        gameState.selectedCards.push(card);
+                    }
+                }
+
+                playCardBtn.disabled = (gameState.selectedCards.length < required);
+                renderStrategyHand();
+            }
+
+            function computerPlayCard() {
+                const required = gameState.blackCard.blanks || 1;
+                const hand = gameState.computerHand;
+                let selections = [];
+                let availableCards = [...hand];
+                const blackCardTheme = gameState.blackCard.theme;
+                
+                let targetAbsurdity;
+
+                // Computer strategy: Adjust target absurdity based on current stats
+                if (gameState.computerStability <= 30) {
+                    targetAbsurdity = 1.5; // Play it safe (low absurdity/canon)
+                } else if (gameState.computerStanding <= 40) {
+                    targetAbsurdity = 4.5; // Go for a risky, high-reward (high absurdity)
+                } else {
+                    targetAbsurdity = 3.0; // Balanced/Mid-range
+                }
+
+                for (let i = 0; i < required; i++) {
+                    if (availableCards.length === 0) break; 
+                    
+                    let candidateCards = [...availableCards];
+
+                    candidateCards.sort((a, b) => {
+                        const aSynergy = a.theme === blackCardTheme ? 1 : 0;
+                        const bSynergy = b.theme === blackCardTheme ? 1 : 0;
+                        
+                        // 1. Prioritize theme synergy (AIs love efficiency)
+                        if (aSynergy !== bSynergy) {
+                            return bSynergy - aSynergy;
+                        }
+                        
+                        // 2. Prioritize closeness to target absurdity
+                        const aDiff = Math.abs(a.absurdity - targetAbsurdity);
+                        const bDiff = Math.abs(b.absurdity - targetAbsurdity);
+                        return aDiff - bDiff;
+                    });
+                    
+                    const preferredCard = candidateCards[0];
+                    if (preferredCard) {
+                        selections.push(preferredCard);
+                        availableCards = availableCards.filter(c => c !== preferredCard);
+                    }
+                }
+                
+                return selections;
+            }
+
+            function calculateTurnOutcome(cardsPlayed) {
+                const required = gameState.blackCard.blanks || 1;
+
+                if (cardsPlayed.length < required) {
+                    return { finalAbsurdity: 0, standing: 0, health: 0, stability: 0, loreViolation: "Insufficient cards played. Minimum impact.", resultMessage: "ABORTED TURN.", resultClass: 'msg-error', synergyMatchCount: 0, cards: cardsPlayed };
+                }
+
+                const blackCardTheme = gameState.blackCard.theme;
+
+                const totalAbsurdity = cardsPlayed.reduce((sum, card) => sum + card.absurdity, 0);
+                const finalAbsurdity = totalAbsurdity / required;
+                
+                const synergyMatchCount = cardsPlayed.filter(card => card.theme === blackCardTheme).length;
+                const synergyBonus = synergyMatchCount * 5;
+
+                let standingDelta = 0;
+                let healthDelta = 0;
+                let stabilityDelta = 0;
+                let loreViolation = "";
+                let resultMessage = "";
+                let resultClass = "";
+
+                // --- Outcome Logic based on Absurdity ---
+                if (finalAbsurdity >= 4.0) {
+                    stabilityDelta = -15; 
+                    if (Math.random() < 0.6) {
+                        standingDelta = 30; 
+                        healthDelta = 0;
+                        loreViolation = "The combined narrative force shattered the enemy's logic core, but the fabric of reality groaned.";
+                        resultMessage = `CRITICAL SUCCESS! +30 Standing! (Base -15 Stability)`;
+                        resultClass = 'msg-success';
+                    } else {
+                        standingDelta = -10;
+                        healthDelta = -20; 
+                        stabilityDelta = -40;
+                        loreViolation = "The absurdity was too much; a timeline singularity formed and collapsed.";
+                        resultMessage = `CATASTROPHIC PARADOX! Major Health and Stability Loss!`;
+                        resultClass = 'msg-error';
+                    }
+                } else if (finalAbsurdity >= 2.5) {
+                    standingDelta = 15;
+                    healthDelta = -5;
+                    stabilityDelta = 5;
+                    loreViolation = "An acceptable, mid-level violation. Chaos contained but costly.";
+                    resultMessage = `PARTIAL SUCCESS. +15 Standing, +5 Stability.`;
+                    resultClass = 'msg-warning';
+                } else {
+                    standingDelta = -5;
+                    healthDelta = -25;
+                    stabilityDelta = 10;
+                    loreViolation = "Your answer was far too canon-compliant and failed to disrupt the enemy timeline.";
+                    resultMessage = `FAILURE. Painfully boring and easily accounted for. -25% Hull.`;
+                    resultClass = 'msg-error';
+                }
+                
+                const difficultyMultiplier = 1 + Math.floor(gameState.currentChapter / 10) * 0.2; 
+                
+                const finalStandingDelta = Math.round((standingDelta + synergyBonus) * difficultyMultiplier);
+                const finalHealthDelta = Math.round(healthDelta * difficultyMultiplier);
+                const finalStabilityDelta = Math.round(stabilityDelta * difficultyMultiplier);
+
+                return {
+                    finalAbsurdity: finalAbsurdity,
+                    standing: finalStandingDelta,
+                    health: finalHealthDelta,
+                    stability: finalStabilityDelta,
+                    loreViolation: loreViolation,
+                    resultMessage: resultMessage,
+                    resultClass: resultClass,
+                    synergyMatchCount: synergyMatchCount,
+                    cards: cardsPlayed
+                };
+            }
+
+            function playTurn() {
+                if (isTurnProcessing || gameState.isGameOver) return;
+
+                const required = gameState.blackCard.blanks || 1;
+                if (gameState.selectedCards.length < required) {
+                    return;
+                }
+                
+                isTurnProcessing = true;
+                playCardBtn.disabled = true; // Lock the play button immediately
+
+                try {
+                    const humanCards = gameState.selectedCards;
+                    let computerCards = []; 
+                    
+                    let winnerOutcome;
+                    let winningSubmission;
+                    let losingSubmission = null;
+                    
+                    const LOSER_HEALTH_PENALTY = -15;
+                    const LOSER_STABILITY_PENALTY = -5;
+
+                    // --- Solo Mode Logic ---
+                    if (gameState.gameMode === 'solo') {
+                        winnerOutcome = calculateTurnOutcome(humanCards);
+                        
+                        gameState.humanStanding = capValue(gameState.humanStanding + winnerOutcome.standing);
+                        gameState.humanHealth = capValue(gameState.humanHealth + winnerOutcome.health);
+                        gameState.humanStability = capValue(gameState.humanStability + winnerOutcome.stability);
+                        
+                        winningSubmission = { cards: humanCards, player: 'Juno' };
+
+                    // --- Vs. Computer Mode Logic ---
+                    } else {
+                        const humanOutcome = calculateTurnOutcome(humanCards);
+                        computerCards = computerPlayCard(); 
+                        const computerOutcome = calculateTurnOutcome(computerCards);
+                        
+                        // Winner is determined by higher final Absurdity
+                        const isHumanWinner = humanOutcome.finalAbsurdity >= computerOutcome.finalAbsurdity;
+                        
+                        let winner, loser, winnerOutcomeFinal;
+
+                        if (isHumanWinner) {
+                            winner = 'Juno';
+                            loser = 'Nexus AI';
+                            winnerOutcomeFinal = humanOutcome;
+                            winningSubmission = { cards: humanCards, player: winner };
+                            losingSubmission = { cards: computerCards, player: loser };
+                        } else {
+                            winner = 'Nexus AI';
+                            loser = 'Juno';
+                            winnerOutcomeFinal = computerOutcome;
+                            winningSubmission = { cards: computerCards, player: winner };
+                            losingSubmission = { cards: humanCards, player: loser };
+                        }
+                        
+                        winnerOutcome = winnerOutcomeFinal; 
+
+                        // Apply winner's effects (could be positive or negative based on absurdity)
+                        if (winner === 'Juno') {
+                            gameState.humanStanding = capValue(gameState.humanStanding + winnerOutcomeFinal.standing);
+                            gameState.humanHealth = capValue(gameState.humanHealth + winnerOutcomeFinal.health);
+                            gameState.humanStability = capValue(gameState.humanStability + winnerOutcomeFinal.stability);
+                        } else {
+                            gameState.computerStanding = capValue(gameState.computerStanding + winnerOutcomeFinal.standing);
+                            gameState.computerHealth = capValue(gameState.computerHealth + winnerOutcomeFinal.health);
+                            gameState.computerStability = capValue(gameState.computerStability + winnerOutcomeFinal.stability);
+                        }
+                        
+                        // Apply loser's penalties
+                        if (loser === 'Juno') {
+                            gameState.humanHealth = capValue(gameState.humanHealth + LOSER_HEALTH_PENALTY);
+                            gameState.humanStability = capValue(gameState.humanStability + LOSER_STABILITY_PENALTY);
+                        } else {
+                            gameState.computerHealth = capValue(gameState.computerHealth + LOSER_HEALTH_PENALTY);
+                            gameState.computerStability = capValue(gameState.computerStability + LOSER_STABILITY_PENALTY);
+                        }
+                    }
+
+                    // --- History Generation (common to both modes) ---
+                    let completedText = gameState.blackCard.text;
+                    let blankIndex = 0;
+                    completedText = completedText.replace(/\[BLANK\]/g, (match) => {
+                        const card = winningSubmission.cards[blankIndex];
+                        blankIndex++;
+                        return `<span class="text-red">**${card ? card.text : 'ERROR'}**</span>`;
+                    });
+                    
+                    let synergyMsg = winnerOutcome.synergyMatchCount > 0 
+                        ? `<span class="msg-synergy">(${winnerOutcome.synergyMatchCount}x Lore Synergy: +${winnerOutcome.synergyMatchCount * 5} Standing)</span>` 
+                        : '';
+
+                    let standingText, healthText, stabilityText, historyMessage;
+
+                    if (losingSubmission) {
+                        // Vs. Computer History Message
+                        standingText = `Winner (${winningSubmission.player}): ${winnerOutcome.standing > 0 ? '+' : ''}${winnerOutcome.standing} Standing.`;
+                        healthText = `Loser (${losingSubmission.player}): ${LOSER_HEALTH_PENALTY}% Hull.`;
+                        stabilityText = `Winner (${winningSubmission.player}): ${winnerOutcome.stability > 0 ? '+' : ''}${winnerOutcome.stability} Stability. (Loser: ${LOSER_STABILITY_PENALTY} Stability)`;
+
+                        historyMessage = 
+                            `<p class="msg-info">The winning outcome, submitted by <strong>${winningSubmission.player}</strong>: ${completedText}</p>
+                            <p>Avg. Absurdity: ${winnerOutcome.finalAbsurdity.toFixed(1)}/5. ${synergyMsg} Multiverse Impact: ${winnerOutcome.loreViolation}</p>
+                            <p>${standingText} | ${healthText} | ${stabilityText}</p>
+                            <p class="${winnerOutcome.resultClass}">${winnerOutcome.resultMessage}</p>`;
+                    } else {
+                        // Solo Mode History Message
+                        standingText = `Standing: ${winnerOutcome.standing > 0 ? '+' : ''}${winnerOutcome.standing}`;
+                        healthText = `Hull: ${winnerOutcome.health > 0 ? '+' : ''}${winnerOutcome.health}`;
+                        stabilityText = `Stability: ${winnerOutcome.stability > 0 ? '+' : ''}${winnerOutcome.stability}`;
+
+                        historyMessage = 
+                            `<p class="msg-info">The resulting scenario: ${completedText}</p>
+                            <p>Avg. Absurdity: ${winnerOutcome.finalAbsurdity.toFixed(1)}/5. ${synergyMsg} Multiverse Impact: ${winnerOutcome.loreViolation}</p>
+                            <p>${standingText} | ${healthText} | ${stabilityText}</p>
+                            <p class="${winnerOutcome.resultClass}">${winnerOutcome.resultMessage}</p>`;
+                    }
+
+                    gameState.history.push({ role: "result", text: historyMessage });
+
+                    renderSubmission(winningSubmission.cards, humanSubmissionEl); 
+                    winningPlayerEl.textContent = winningSubmission.player;
+                    
+                    if (losingSubmission) {
+                        renderSubmission(losingSubmission.cards, computerSubmissionEl);
+                        losingPlayerEl.textContent = losingSubmission.player;
+                        losingSubmissionTitleEl.classList.remove('hidden');
+                    } else {
+                        computerSubmissionEl.innerHTML = '';
+                        losingSubmissionTitleEl.classList.add('hidden');
+                    }
+
+                    submissionAreaEl.classList.remove('hidden');
+                    handAreaEl.innerHTML = ''; // Clear hand while outcome is visible
+                    
+                    renderHistory();
+                    updateStats();
+
+                    // --- Next Turn Setup after Delay ---
+                    setTimeout(() => {
+                        submissionAreaEl.classList.add('hidden');
+                        humanSubmissionEl.innerHTML = '';
+                        computerSubmissionEl.innerHTML = '';
+                        
+                        // Remove submitted cards from hands
+                        gameState.humanHand = gameState.humanHand.filter(c => !humanCards.some(pc => pc.text === c.text));
+                        
+                        if (gameState.gameMode === 'vs-computer') {
+                            gameState.computerHand = gameState.computerHand.filter(c => !computerCards.some(pc => pc.text === c.text));
+                        }
+
+                        if (checkEndGame()) {
+                            isTurnProcessing = false;
+                            toggleGameControls(false); 
+                            return;
+                        }
+
+                        drawHand(gameState.humanHand);
+                        if (gameState.gameMode === 'vs-computer') { drawHand(gameState.computerHand); }
+                        drawBlackCard(); 
+                        
+                        gameState.selectedCards = [];
+                        
+                        // Reset the lock BEFORE rendering the next turn
+                        isTurnProcessing = false; 
+                        
+                        renderGame(); 
+                        
+                        // Re-enable play button based on new selection count
+                        playCardBtn.disabled = (gameState.selectedCards.length < (gameState.blackCard.blanks || 1)); 
+                        
+                        toggleGameControls(false); // Unlock controls (mode buttons remain locked by chapter count check)
+                    }, 3500); // Delay for better readability of the outcome
+                } catch (error) {
+                    console.error("Critical error during turn processing:", error);
+                    storyHistoryEl.innerHTML += `<p class="history-result text-sm msg-error">A CRITICAL SCRIPT ERROR OCCURRED! Please reset the campaign. Check console for details.</p>`;
+                    renderHistory();
+                    isTurnProcessing = false; 
+                    toggleGameControls(false); 
+                }
+            }
+
+            function checkEndGame() {
+                // Check Human Loss Conditions
+                if (gameState.humanHealth <= 0 || gameState.humanStability <= 0 || gameState.humanStanding <= 10) {
+                    let message = "GAME OVER";
+                    if (gameState.humanHealth <= 0) message = "Juno Eclipse, Hull Integrity compromised! The ship failed to survive the paradox. **GAME OVER**.";
+                    else if (gameState.humanStanding <= 10) message = "Juno's chaotic methods caused a catastrophic loss of credibility. You are grounded by a joint tribunal. **GAME OVER**.";
+                    else if (gameState.humanStability <= 0) message = "Temporal Stability Reached 0%! The paradox ripple erased your ship and crew from history. **TIMELINE PARADOX**.";
+                    endGame(message, false); // False for a loss condition
+                    return true;
+                } 
+                
+                // Check Vs. Computer Win Conditions
+                if (gameState.gameMode === 'vs-computer' && (gameState.computerHealth <= 0 || gameState.computerStability <= 0 || gameState.computerStanding <= 10)) {
+                    let message = `Victory! The Nexus AI's core was destroyed by its own illogical submissions. **Juno Eclipse Triumphs!**`;
+                    endGame(message, true); // True for a win condition
+                    return true;
+                }
+                return false;
+            }
+
+            // --- Rendering and UI Updates ---
+
+            function renderSubmission(cards, targetEl) {
+                targetEl.innerHTML = '';
+                cards.forEach(card => {
+                    const cardEl = document.createElement('div');
+                    cardEl.classList.add('white-card', 'submission-card');
+
+                    const textDiv = document.createElement('div');
+                    textDiv.textContent = card.text;
+                    
+                    const tagDiv = document.createElement('div');
+                    tagDiv.classList.add('card-theme-tag');
+                    tagDiv.textContent = `Absurdity: ${card.absurdity} | Theme: ${card.theme || 'CANON'}`;
+                    
+                    cardEl.appendChild(textDiv);
+                    cardEl.appendChild(tagDiv);
+                    targetEl.appendChild(cardEl);
+                });
+            }
+
+            function renderGame() {
+                renderHistory();
+                updateStats();
+                renderBlackCard();
+                renderStrategyHand();
+            }
+
+            function renderHistory() {
+                storyHistoryEl.innerHTML = '';
+                gameState.history.forEach(item => {
+                    const p = document.createElement('p');
+                    p.classList.add('text-sm');
+                    
+                    if (item.role === 'model') {
+                        p.classList.add('history-model', 'text-white', 'font-bold');
+                        p.innerHTML = `<strong>${item.text}</strong>`;
+                    } else if (item.role === 'result') {
+                        p.classList.add('history-result');
+                        p.innerHTML = item.text;
+                    }
+                    storyHistoryEl.appendChild(p);
+                });
+                // Always scroll to bottom for real-time feed
+                storyHistoryEl.scrollTop = storyHistoryEl.scrollHeight;
+            }
+
+            function updateStats() {
+                chapterCountEl.textContent = gameState.currentChapter;
+                
+                // Human Stats
+                humanStandingStatEl.textContent = `${gameState.humanStanding}/100`;
+                humanHealthStatEl.textContent = `${gameState.humanHealth}%`;
+                humanStabilityStatEl.textContent = `${gameState.humanStability}%`;
+                
+                humanStabilityStatEl.style.color = gameState.humanStability > 75 ? DYNAMIC_COLORS.temporal : gameState.humanStability < 30 ? DYNAMIC_COLORS.error : DYNAMIC_COLORS.warning;
+                humanStandingStatEl.style.color = gameState.humanStanding > 75 ? DYNAMIC_COLORS.success : gameState.humanStanding < 30 ? DYNAMIC_COLORS.error : DYNAMIC_COLORS.warning;
+                humanHealthStatEl.style.color = gameState.humanHealth > 70 ? DYNAMIC_COLORS.success : gameState.humanHealth < 30 ? DYNAMIC_COLORS.error : DYNAMIC_COLORS.warning;
+                handCountEl.textContent = gameState.humanHand.length; 
+
+                // Computer Stats visibility control 
+                if (gameState.gameMode === 'vs-computer') {
+                    computerStatsEl.classList.remove('hidden');
+                    computerStandingStatEl.textContent = `${gameState.computerStanding}/100`;
+                    computerHealthStatEl.textContent = `${gameState.computerHealth}%`;
+                    computerStabilityStatEl.textContent = `${gameState.computerStability}%`;
+
+                    computerStabilityStatEl.style.color = gameState.computerStability > 75 ? DYNAMIC_COLORS.temporal : gameState.computerStability < 30 ? DYNAMIC_COLORS.error : DYNAMIC_COLORS.warning;
+                    computerStandingStatEl.style.color = gameState.computerStanding > 75 ? DYNAMIC_COLORS.success : gameState.computerStanding < 30 ? DYNAMIC_COLORS.error : DYNAMIC_COLORS.warning;
+                    computerHealthStatEl.style.color = gameState.computerHealth > 70 ? DYNAMIC_COLORS.success : gameState.computerHealth < 30 ? DYNAMIC_COLORS.error : DYNAMIC_COLORS.warning;
+                } else {
+                    computerStatsEl.classList.add('hidden');
+                }
+            }
+
+            function renderBlackCard() {
+                if (gameState.blackCard) {
+                    blackCardDisplayEl.style.backgroundColor = '#000000'; 
+                    blackCardDisplayEl.style.color = '#ffffff';
+                    blackCardDisplayEl.classList.remove('game-over-display');
+                    blackCardDisplayEl.classList.add('black-card');
+
+                    let text = gameState.blackCard.text.replace(/\[BLANK\]/g, '<span class="text-red">BLANK</span>');
+                    
+                    const required = gameState.blackCard.blanks || 1;
+                    const info = `<div class="required-cards-info">Theme: ${gameState.blackCard.theme || 'CANON'} | Requires: ${required} card${required > 1 ? 's' : ''}</div>`;
+                    
+                    // Update button text for card count
+                    playCardBtn.textContent = `Play Chosen Card${required > 1 ? 's' : ''}`; 
+
+                    blackCardTextEl.innerHTML = `<div class="text-center font-bold text-lg">${text}</div> ${info}`;
+                } else {
+                    blackCardTextEl.textContent = "Select a mode and start the campaign.";
+                }
+            }
+
+            function renderStrategyHand() {
+                if (submissionAreaEl.classList.contains('hidden') && !isTurnProcessing) { 
+                    handAreaEl.innerHTML = '';
+                    if (gameState.isGameOver) return;
+
+                    gameState.humanHand.forEach(card => {
+                        const cardEl = document.createElement('div');
+                        cardEl.classList.add('white-card');
+                        cardEl.title = `Absurdity: ${card.absurdity}/5 | Theme: ${card.theme}`;
+
+                        const textDiv = document.createElement('div');
+                        textDiv.textContent = card.text;
+                        
+                        const tagDiv = document.createElement('div');
+                        tagDiv.classList.add('card-theme-tag');
+                        tagDiv.textContent = `Absurdity: ${card.absurdity} | Theme: ${card.theme || 'CANON'}`;
+                        
+                        cardEl.appendChild(textDiv);
+                        cardEl.appendChild(tagDiv);
+                        
+                        const isSelected = gameState.selectedCards.some(c => c.text === card.text);
+
+                        if (isSelected) {
+                            cardEl.classList.add('selected');
+                        } else {
+                            cardEl.classList.remove('selected');
+                        }
+
+                        cardEl.addEventListener('click', () => {
+                            selectCard(card);
+                        });
+                        handAreaEl.appendChild(cardEl);
+                    });
+                }
+            }
+
+            function setModeUI(mode) {
+                // Only allow mode changes if the game hasn't started (chapter 0) or is over
+                if (gameState.currentChapter > 0 && !gameState.isGameOver) return; 
+
+                // Update button classes
+                modeSoloBtn.classList.remove('selected-mode');
+                modeVsComputerBtn.classList.remove('selected-mode');
+                
+                if (mode === 'solo') {
+                    modeSoloBtn.classList.add('selected-mode');
+                } else {
+                    modeVsComputerBtn.classList.add('selected-mode');
+                }
+
+                // Always re-initialize to ensure a clean state when switching modes pre-game
+                initializeGame(); 
+            }
+
+            function endGame(message, isWin) {
+                gameState.isGameOver = true;
+                handAreaEl.innerHTML = '';
+                
+                blackCardTextEl.innerHTML = `<div class="end-game-message" style="color:${isWin ? DYNAMIC_COLORS.success : DYNAMIC_COLORS.error};">${message}</div>`;
+                blackCardDisplayEl.style.backgroundColor = '#2c3545';
+                blackCardDisplayEl.style.color = DYNAMIC_COLORS.text; 
+                blackCardDisplayEl.classList.remove('black-card');
+                blackCardDisplayEl.classList.add('game-over-display');
+
+                playCardBtn.style.display = 'none';
+                
+                // Allow mode change and new game start
+                startGameButtonEl.style.display = 'block';
+                toggleGameControls(false); 
+                
+                // Make sure reset is still enabled if they lost mid-game
+                resetButtonEl.disabled = false;
+            }
+
+            // --- Event Listeners and Initialization ---
+
+            // Use standard DOMContentLoaded listener
+            document.addEventListener('DOMContentLoaded', function() {
+                // Attach main event listeners
+                modeSoloBtn.addEventListener('click', () => setModeUI('solo'));
+                modeVsComputerBtn.addEventListener('click', () => setModeUI('vs-computer'));
+                
+                // Use initializeGame for a clean, full reset
+                resetButtonEl.addEventListener('click', initializeGame); 
+                
+                // Use startNewGame only for the actual campaign launch
+                startGameButtonEl.addEventListener('click', startNewGame);
+                
+                // Play turn button
+                playCardBtn.addEventListener('click', playTurn);
+
+                // Initial setup
+                initializeGame();
+            });
+        })();
+    </script>
+</body>
+</html>

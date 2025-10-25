@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Juno Eclipse: The Infinite Nexus Sabotage</title>
-    <!-- Load Tailwind CSS CDN - THIS IS THE MOST LIKELY LINE TO BE STRIPPED BY WORDPRESS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* --- Custom CSS for The Juno Eclipse Game --- */
@@ -24,12 +23,10 @@
             --color-temporal: #f472b6; /* Pink for Stability */
         }
 
-        /* --- WP Safety: Apply global styles directly to the game container's parent
-           to avoid conflicts with the theme's <body> tag. */
+        /* --- WP Safety: Apply global styles directly to the game container's parent */
         #game-outer-wrapper {
             background-color: #0d1117; /* Dark background */
             font-family: 'Inter', sans-serif;
-            /* Ensures it doesn't just span the small WP content box, but the width available */
             width: 100%;
             padding: 20px 0;
             position: relative; 
@@ -55,7 +52,27 @@
             text-shadow: 0 0 5px rgba(139, 92, 246, 0.7);
         }
 
-        /* --- Status Bar --- */
+        /* --- Status Bar and Flashing Animations --- */
+        @keyframes flash-green {
+            0%, 100% { background-color: transparent; }
+            50% { background-color: rgba(52, 211, 153, 0.4); } /* Success */
+        }
+        @keyframes flash-red {
+            0%, 100% { background-color: transparent; }
+            50% { background-color: rgba(239, 68, 68, 0.4); } /* Error */
+        }
+        
+        .status-item {
+            padding: 2px 0;
+            transition: background-color 0.1s; /* Smooth transition for status item changes */
+        }
+        .status-item.flashing-green {
+            animation: flash-green 0.5s ease-out 2;
+        }
+        .status-item.flashing-red {
+            animation: flash-red 0.5s ease-out 2;
+        }
+        
         .status-block {
             background-color: #374151;
             padding: 12px;
@@ -78,43 +95,11 @@
             user-select: none;
         }
 
-        #mode-selection button:hover:not(.selected-mode) {
-            background-color: rgba(139, 92, 246, 0.15);
-        }
-
-        #mode-selection button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-
         #mode-selection button.selected-mode {
             background-color: var(--color-primary);
             border-color: #c4b5fd;
             box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
         }
-
-        /* --- Story History --- */
-        #story-history {
-            max-height: 200px;
-            overflow-y: auto;
-            padding: 10px;
-            border: 1px solid #4b5563;
-            border-radius: 8px;
-            background-color: #2c3545;
-        }
-
-        #story-history::-webkit-scrollbar { width: 8px; }
-        #story-history::-webkit-scrollbar-thumb { background: #525252; border-radius: 10px; }
-        #story-history::-webkit-scrollbar-track { background: #1f2937; }
-
-        .history-result { padding: 5px; border-left: 4px solid var(--color-primary); background-color: #374151; }
-
-        .msg-info { color: #9ca3af; font-style: italic; }
-        .msg-success { color: var(--color-success); font-weight: bold; }
-        .msg-warning { color: var(--color-warning); font-weight: bold; }
-        .msg-error { color: var(--color-error); font-weight: bold; }
-        .msg-synergy { color: #5eead4; }
 
         /* --- Black Card --- */
         .black-card {
@@ -127,31 +112,6 @@
             flex-direction: column;
             justify-content: space-between;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
-        }
-
-        .black-card .text-red {
-            color: var(--color-error);
-        }
-
-        .required-cards-info {
-            font-size: 0.8rem;
-            color: #9ca3af;
-            text-align: right;
-            margin-top: 10px;
-        }
-
-        .game-over-display {
-            background-color: #2c3545 !important;
-            border: 3px solid var(--color-error);
-            text-align: center;
-            justify-content: center;
-            color: var(--color-text) !important;
-            padding: 30px !important;
-        }
-
-        .end-game-message {
-            font-size: 1.5rem;
-            color: var(--color-error);
         }
 
         /* --- White Cards --- */
@@ -172,23 +132,18 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             user-select: none;
         }
-
-        .white-card:hover {
-            box-shadow: 0 4px 10px var(--color-primary);
-            transform: translateY(-2px);
+        
+        /* Absurdity Display Styling */
+        .absurdity-rating {
+            font-weight: bold;
+            font-size: 0.75rem;
+            padding: 2px 0;
         }
 
         .white-card.selected {
             border: 3px solid var(--color-primary);
             background-color: #e0f2fe;
             box-shadow: 0 0 15px var(--color-primary);
-        }
-
-        /* Submission Cards should not be interactive */
-        .submission-card {
-            cursor: default;
-            pointer-events: none;
-            opacity: 0.8;
         }
 
         .card-theme-tag {
@@ -199,39 +154,29 @@
             border-top: 1px dashed #e5e7eb;
             padding-top: 5px;
         }
-
-        /* Action Button Styling */
-        .choice-button:disabled, .play-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
+        
+        /* Story History styles (unchanged but critical) */
+        #story-history { max-height: 200px; overflow-y: auto; padding: 10px; border: 1px solid #4b5563; border-radius: 8px; background-color: #2c3545; }
+        #story-history::-webkit-scrollbar { width: 8px; }
+        #story-history::-webkit-scrollbar-thumb { background: #525252; border-radius: 10px; }
+        #story-history::-webkit-scrollbar-track { background: #1f2937; }
+        .history-result { padding: 5px; border-left: 4px solid var(--color-primary); background-color: #374151; }
+        .msg-info { color: #9ca3af; font-style: italic; }
+        .msg-success { color: var(--color-success); font-weight: bold; }
+        .msg-warning { color: var(--color-warning); font-weight: bold; }
+        .msg-error { color: var(--color-error); font-weight: bold; }
+        .msg-synergy { color: #5eead4; }
 
         /* Responsive Adjustments (Mobile First) */
         @media (max-width: 600px) {
-            #game-container-wp {
-                padding: 10px;
-            }
-
             .white-card {
-                flex: 1 1 calc(50% - 10px); /* Two cards per row on mobile */
-                min-width: 100px;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-            }
-            .choice-button {
-                width: 100%;
-                margin: 5px 0 !important;
+                flex: 1 1 calc(50% - 10px); 
             }
         }
     </style>
 </head>
 <body>
-    <!-- Outer Wrapper for WP Background Isolation -->
     <div id="game-outer-wrapper">
-        <!-- Main Game Container -->
         <div id="game-container-wp" class="mx-auto p-4 md:p-8">
             <h1>Juno Eclipse: The Infinite Nexus Sabotage</h1>
             
@@ -244,16 +189,16 @@
             <div id="status-bar" class="flex flex-col md:flex-row justify-between gap-3 mb-6">
                 <div class="status-block flex-1">
                     <h3>Juno Eclipse (You)</h3>
-                    <div class="status-item text-sm">Chapter: <span id="chapter-count" class="font-mono text-lg text-yellow-300">0</span></div>
-                    <div class="status-item text-sm">Hull Integrity: <span id="human-health-stat" class="font-mono text-lg">100%</span></div>
-                    <div class="status-item text-sm">Rebel Standing: <span id="human-standing-stat" class="font-mono text-lg">60</span></div>
-                    <div class="status-item text-sm">Stability: <span id="human-stability-stat" class="status-temporal font-mono text-lg">100%</span></div>
+                    <div class="status-item text-sm" id="chapter-item">Chapter: <span id="chapter-count" class="font-mono text-lg text-yellow-300">0</span></div>
+                    <div class="status-item text-sm" id="health-item">Hull Integrity: <span id="human-health-stat" class="font-mono text-lg">100%</span></div>
+                    <div class="status-item text-sm" id="standing-item">Rebel Standing: <span id="human-standing-stat" class="font-mono text-lg">60</span></div>
+                    <div class="status-item text-sm" id="stability-item">Stability: <span id="human-stability-stat" class="font-mono text-lg">100%</span></div>
                 </div>
                 <div class="status-block hidden flex-1" id="computer-stats">
                     <h3>The Nexus AI (Opponent)</h3>
-                    <div class="status-item text-sm">Hull Integrity: <span id="computer-health-stat" class="font-mono text-lg">100%</span></div>
-                    <div class="status-item text-sm">Control Standing: <span id="computer-standing-stat" class="font-mono text-lg">60</span></div>
-                    <div class="status-item text-sm">Stability: <span id="computer-stability-stat" class="font-mono text-lg">100%</span></div>
+                    <div class="status-item text-sm" id="comp-health-item">Hull Integrity: <span id="computer-health-stat" class="font-mono text-lg">100%</span></div>
+                    <div class="status-item text-sm" id="comp-standing-item">Control Standing: <span id="computer-standing-stat" class="font-mono text-lg">60</span></div>
+                    <div class="status-item text-sm" id="comp-stability-item">Stability: <span id="computer-stability-stat" class="font-mono text-lg">100%</span></div>
                 </div>
             </div>
             
@@ -297,15 +242,29 @@
     
     <!-- JavaScript Logic -->
     <script>
-        // Use an IIFE for better scope encapsulation
         (function() {
-            // Define colors used in dynamic styling for maximum stability
+            
+            // --- Configuration ---
             const DYNAMIC_COLORS = {
                 temporal: '#f472b6', 
                 error: '#ef4444', 
                 warning: '#fcd34d',
-                success: '#34d399'
+                success: '#34d399',
+                // For absurdity display
+                absurdityLow: '#10b981', // green-500
+                absurdityMid: '#f59e0b', // amber-500
+                absurdityHigh: '#ef4444' // red-500
             };
+            const THEMES = ['SW', 'ST', 'ME', 'SG', 'WHO', 'FIREFLY', 'ALIEN', 'SC', 'LOVECRAFT', 'RANDOM', 'CANON'];
+            
+            // --- Combinatorial Card Generation Arrays (Trillions in potential combinations) ---
+            const ADJECTIVES = ["A tiny", "A weeping", "A sentient", "The final", "An anti-gravity", "A laser-guided", "A holographic", "A malfunctioning", "A highly concentrated", "The crushing", "A rogue", "A porcelain", "An emotionally supportive", "A Volus-sized", "A Krill-based", "An easily confused", "A sentient", "A radioactive", "A perfectly formed", "The terrifying", "A glitter-covered", "A fully functional", "A perpetually bored", "A secretly ambitious", "A suspiciously damp", "An awkward", "The unspeakable", "A sentient", "A rogue", "A single, misplaced", "The horrifying truth of", "A morally ambiguous", "A deeply unsettling", "A hyper-intelligent", "A surprisingly rude", "An entire crate of", "A tiny pair of", "A caffeinated", "A heavily encrypted", "The existential dread of", "An overly dramatic", "A mysteriously damp", "A freshly laundered", "A genetically modified", "An inexplicable, powerful", "A time-displaced", "A morally bankrupt", "A dangerously flammable", "A subtly racist", "An adorable, yet deadly", "A technologically stunted", "A dangerously unstable", "A musically gifted", "A perpetually confused", "A shockingly clean", "A surprisingly sticky", "An ancient, forgotten", "A recently upgraded", "A deeply philosophical", "A suspiciously crunchy", "A non-Euclidean", "The unsettling scent of", "A perpetually surprised", "A slightly melted", "A meticulously calibrated", "A poorly translated", "A vaguely cylindrical", "A politically motivated", "A spontaneously generated", "An emotionally crippled", "A heavily insured", "A digitally preserved", "A physically incapable", "A deceptively simple", "A violently purple", "An economically unsound", "A technologically advanced", "A remarkably bland", "A psychologically damaging", "A cosmically indifferent", "An absurdly expensive", "A criminally underrated", "A universally despised", "A subtly humming", "A surprisingly comfortable", "A geometrically impossible", "A socially inept", "A highly suspicious", "A strangely familiar", "A deceptively bouncy", "An unnecessarily large", "A perpetually glistening", "A disturbingly quiet", "A brightly colored", "An unexpectedly potent", "A strategically placed", "A rhythmically pulsing", "A theoretically sound", "A tragically misplaced"];
+            
+            const NOUNS = ["Sarlacc Pit", "Tribble", "Gonky Droid", "Jar Jar Binks' sock", "Transporter Chief's coffee cup", "Klingon opera score", "Vorlon Ambassador's wig", "Sonic Screwdriver", "TARDIS key", "Reaper heart", "Volus credit chip", "Mandalorian helmet", "Xenomorph plushie", "Zerg larva", "Stargate power conduit", "Goa'uld snakehead", "Shiny piece of aluminum foil", "Wookiee hairball", "Borg drone's favorite snack", "Jaffa warrior's tear", "Reaver corpse", "Elder Sign", "Mister Potato Head", "Crate of redundant red shirts", "Garrus's calibration schedule", "Sentient pair of pants", "Sentient knitted hat", "Last remaining slice of pizza", "Giant foam finger", "Rubber chicken with a pulley in the middle", "Holodeck safety protocol", "Primary buffer panel", "Deck scrubber", "Fez", "Bow tie", "Bad Wolf graffiti", "Bacta tank drainage plug", "Thermal detonator", "Unidentified green goo", "A stack of ancient data rods", "A particularly noisy modem", "A rogue AI's mood ring", "A microscopic black hole", "A highly aggressive chihuahua", "A three-legged space badger", "A container of emergency glitter", "A universal remote control", "A malfunctioning replicator", "A broken pocket watch", "A very confused Tribble", "A single, powerful sneeze", "A misplaced infinity stone", "A pair of reading glasses", "A worn out VHS tape", "A bucket of spare parts", "A forgotten sandwich", "A deeply philosophical Roomba", "A sentient sock puppet", "A genetically engineered squirrel", "A perfectly ripe banana", "A small, quiet kitten", "A massive ball of twine", "A holographic llama", "A tiny spaceship blueprint", "A cosmic rubber duck", "A mysterious crystal skull", "A jar of pickled onions", "A perfectly circular pebble", "A digital ghost", "A highly polished spoon", "A velvet painting of Elvis", "A map to nowhere", "A rusty can opener", "A singing fish toy", "A portable black hole generator", "A pair of mismatched gloves", "A jar of space jam", "A self-aware rubber band", "A miniature Death Star replica", "A very loud harmonica", "A slightly used broomstick", "A mysterious box of donuts", "A forgotten lucky charm", "A handful of cosmic dust", "A self-sealing body bag", "A slightly toxic cupcake", "A perpetually spinning top", "A tiny, aggressive ferret", "A highly durable napkin", "A suspiciously clean spork", "A digitally enhanced echo", "A time-traveling goldfish", "A ceremonial battle-spatula", "A perpetually echoing whisper", "A discarded piece of popcorn", "A perfectly normal rock"];
+
+            const VERBS = ["debating", "flossing", "calibrating", "singing", "disassembling", "negotiating", "interrogating", "replicating", "erasing", "wrestling", "romancing", "attempting to fix", "explaining the plot of", "baking a cake shaped like", "performing interpretive dance for", "wearing a tiny hat while", "shouting obscenities at", "rearranging the contents of", "sincerely apologizing to", "demanding a refund for", "ignoring the advice of", "threatening with a lecture on", "writing a passive-aggressive note about", "secretly admiring", "trying to parallel park with", "getting surprisingly emotional about", "blaming the entire crisis on", "teaching basic calculus to", "forcing everyone to listen to", "engaging in a rap battle with", "performing surgery on", "hiding inside", "arguing with", "carefully cataloging", "enthusiastically greeting", "sincerely regretting", "unnecessarily explaining", "aggressively staring at", "gently caressing", "confidently mispronouncing", "frantically searching for", "relentlessly mocking", "inadvertently activating", "professionally reviewing", "violently shaking", "mysteriously transforming into", "publicly weeping over", "silently judging", "attempting to romance", "inappropriately comparing", "suddenly adopting", "solemnly swearing allegiance to", "dramatically unveiling", "secretly taking pictures of", "overwhelming with kindness", "cynically commenting on", "bravely ignoring", "haphazardly repairing", "meticulously dusting", "unintentionally setting fire to", "enthusiastically destroying", "reluctantly accepting", "politely declining", "accidentally eating", "systematically dismantling", "quietly weeping near", "loudly complaining about", "strategically placing", "magically conjuring", "confusing with poetry", "calmly demanding", "brutally critiquing", "passionately defending", "aggressively cuddling", "desperately attempting to hide", "subtly undermining", "forcefully injecting into", "playfully swatting at", "relentlessly cheering for", "unintentionally insulting", "solemnly burying", "gleefully reanimating", "digitally enhancing", "emotionally supporting", "violently disagreeing with", "awkwardly complimenting", "cautiously approaching", "sarcastically praising", "firmly rejecting", "clumsily knocking over", "carefully balancing", "pointlessly measuring", "uncontrollably giggling at", "patiently waiting for", "dangerously licking", "morally compromising"];
+            
+            const CONTEXTS = ["the entire USS Enterprise-D crew.", "a tiny, decorative teapot.", "the fourth dimension's tax laws.", "a 1980s aerobics instruction video.", "a highly secured box of paperclips.", "Shepard's collection of fish.", "the Citadel Council's worst fears.", "the Borg Queen's dating profile.", "a time-displaced traffic cone.", "a convention of angry Ewoks.", "a rogue Gonk Droid with existential dread.", "the Emperor's new clothes.", "the collected works of William Shatner.", "a deeply philosophical Roomba.", "a highly caffeinated T'ealc.", "the complete history of bad movie sequels.", "a rogue singularity in a coffee pot.", "a perfectly normal office plant.", "the Reapers' primary weakness: glitter.", "the secret recipe for Bantha Blue Milk.", "a Volus aggressively selling insurance.", "the concept of free will and responsibility.", "a stack of overdue library books.", "a highly unstable plasma rifle.", "a rogue asteroid that looks like a potato.", "the secret to eternal youth (it's napping).", "a surprisingly clean sock.", "a bucket of extremely confusing Legos.", "a convention of angry Ewoks.", "a highly suspicious garden gnome.", "the horrifying implications of a two-way mirror.", "a sentient puddle of water.", "the universal symbol for 'do not touch'.", "a tiny black hole disguised as a button.", "the concept of causality itself.", "a perpetually running clock.", "the collected thoughts of a space slug.", "a discarded pair of socks.", "a highly sensitive mood ring.", "a jar of artisanal pickles.", "the existential horror of infinite parallel universes.", "a pile of highly compressed nothing.", "the lost episode of Firefly.", "a single, perfect tear.", "the bureaucratic process for timeline repair.", "a highly decorative bath bomb.", "the terrifying sound of silence.", "a perpetually falling feather.", "the political campaign of a sentient nebula.", "a box of disappointment and regret.", "the last remaining drop of oil.", "a highly specialized toothbrush.", "the profound mystery of missing socks.", "a rogue hologram of Captain Kirk.", "the gravitational pull of destiny.", "a bucket of unanswerable questions.", "a single grain of sand.", "a highly sensitive time machine's antenna.", "the concept of 'maybe'.", "a surprisingly effective placebo.", "the rules for multi-level marketing in space.", "a stack of laminated 'I told you so' cards.", "a miniature golf course.", "the complete lyrics to Rick Astley's 'Never Gonna Give You Up'.", "a rogue asteroid that looks like a potato.", "the crushing weight of existence itself.", "a self-aware lint roller.", "the universal laws of bad parking.", "a dangerously wobbly chair.", "a container of purified sarcasm.", "the collective subconscious of all accountants.", "a deeply upsetting childhood memory.", "the exact point where art becomes trash.", "a highly aggressive rubber duck.", "the mysterious origin of the ellipsis.", "a tiny, holographic dinosaur.", "the existential threat of Mondays.", "a stack of rejected fan fiction.", "a bowl of cold, damp noodles.", "the principle of least effort.", "a highly contested piece of fruit.", "the philosophical debate over toast.", "a spontaneously generated black hole.", "a perpetually regenerating scratch card.", "the sound of one hand clapping, but louder.", "a tiny, majestic pony.", "the universal sign for 'I need coffee'.", "a misplaced sense of moral superiority.", "a can of highly explosive beans.", "the horrifying reality of reality television.", "a bucket of warm, flat soda.", "the true meaning of 'fartlek'.", "a surprisingly comfortable rock.", "the rules of the intergalactic thumb war championship.", "a highly illegal laser pointer."];
 
             const CAH_DATA = {
                 blackCards: [
@@ -328,35 +287,6 @@
                     { text: "To gain passage through **Reaver** territory, Serenity's captain insisted on gifting them [BLANK] and distracting them with [BLANK].", blanks: 2, theme: 'FIREFLY' },
                     { text: "The **Borg**'s assimilation process now requires the drone to first experience the profound disappointment of [BLANK] followed by the crushing reality of [BLANK].", blanks: 2, theme: 'ST' },
                 ],
-                whiteCards: [
-                    { text: "Jar Jar Binks' emotional support Tribble.", absurdity: 5, theme: 'SW' },
-                    { text: "Sarlacc Pit breath mints.", absurdity: 4, theme: 'SW' },
-                    { text: "A Zero Point Module powering a waffle iron.", absurdity: 5, theme: 'SG' },
-                    { text: "Darth Vader's collection of porcelain dolls.", absurdity: 3, theme: 'SW' },
-                    { text: "An entire crate of redundant red shirts.", absurdity: 3, theme: 'ST' },
-                    { text: "A bucket of highly-concentrated, anti-gravity lubricant.", absurdity: 4, theme: 'FIREFLY' },
-                    { text: "The crushing realization that all our problems stem from poor resource management.", absurdity: 1, theme: 'CANON' },
-                    { text: "A tiny pair of plastic hands.", absurdity: 4, theme: 'RANDOM' },
-                    { text: "A rogue Gonk Droid with a caffeine addiction.", absurdity: 3, theme: 'SW' },
-                    { text: "A Volus wearing a tiny sombrero.", absurdity: 5, theme: 'ME' },
-                    { text: "Commander Shepard trying to romance a Krogan.", absurdity: 4, theme: 'ME' },
-                    { text: "A **Dalek** stuck on a surprisingly short flight of stairs.", absurdity: 1, theme: 'WHO' },
-                    { text: "A Sandworm covered in glitter.", absurdity: 5, theme: 'DUNE' },
-                    { text: "The Doctor's Sonic Screwdriver attempting to fix a broken heart.", absurdity: 3, theme: 'WHO' },
-                    { text: "Jayne's favorite knitted hat, now sentient.", absurdity: 4, theme: 'FIREFLY' },
-                    { text: "The only surviving VHS copy of *The Holiday Special*.", absurdity: 4, theme: 'SW' },
-                    { text: "Garrus Vakarian's extremely detailed calibration schedule.", absurdity: 1, theme: 'ME' },
-                    { text: "A **Cyberman** debating the ethics of upgrading human plumbing.", absurdity: 3, theme: 'WHO' },
-                    { text: "A perfectly formed, yet extremely rude, potato.", absurdity: 5, theme: 'RANDOM' },
-                    { text: "The awkward moment when you realize you're the bad guy.", absurdity: 2, theme: 'CANON' },
-                    { text: "Two bros chillin' in a hot tub, five feet apart 'cause they're not gay.", absurdity: 5, theme: 'RANDOM' },
-                    { text: "The terrifying truth behind the Great Link's Wi-Fi signal.", absurdity: 4, theme: 'ST' },
-                    { text: "A tiny, aggressive ferret wearing full Mandalorian armor.", absurdity: 5, theme: 'SW' },
-                    { text: "T'ealc's secret weakness: reality TV marathons.", absurdity: 2, theme: 'SG' },
-                    { text: "The sudden, inexplicable appearance of Kenny G.", absurdity: 3, theme: 'RANDOM' },
-                    { text: "A vial of concentrated angst from a teenage alien.", absurdity: 2, theme: 'ST' },
-                    { text: "The blueprints for a fully functional, yet extremely sad, robot.", absurdity: 1, theme: 'CANON' },
-                ],
                 HAND_SIZE: 7, 
             };
 
@@ -366,22 +296,31 @@
                 humanStanding: 60,
                 humanHealth: 100,
                 humanStability: 100, 
+                maxStanding: 60, // Track max standing for the score summary
                 humanHand: [],
                 computerStanding: 60,
                 computerHealth: 100,
                 computerStability: 100, 
-                gameMode: 'solo', // Default set by initial UI state
+                gameMode: 'solo', 
                 currentChapter: 0,
                 isGameOver: false,
                 blackCard: null,
                 selectedCards: [], 
-                deck: [], 
                 usedBlackCardTexts: []
             };
 
             let gameState = { ...INITIAL_STATE }; 
 
-            // --- DOM Elements ---
+            // --- DOM Element Refs ---
+            const statusItems = {
+                'human-health-stat': 'health-item', 
+                'human-standing-stat': 'standing-item', 
+                'human-stability-stat': 'stability-item',
+                'computer-health-stat': 'comp-health-item',
+                'computer-standing-stat': 'comp-standing-item',
+                'computer-stability-stat': 'comp-stability-item'
+            };
+
             const storyHistoryEl = document.getElementById('story-history');
             const blackCardDisplayEl = document.getElementById('black-card-display');
             const blackCardTextEl = document.getElementById('black-card-text');
@@ -390,24 +329,20 @@
             const resetButtonEl = document.getElementById('reset-game-btn');
             const startGameButtonEl = document.getElementById('start-game-btn');
             const chapterCountEl = document.getElementById('chapter-count');
-
             const submissionAreaEl = document.getElementById('submission-area');
             const humanSubmissionEl = document.getElementById('human-submission');
             const computerSubmissionEl = document.getElementById('computer-submission');
             const losingSubmissionTitleEl = document.getElementById('losing-submission-title');
             const winningPlayerEl = document.getElementById('winning-player');
             const losingPlayerEl = document.getElementById('losing-player');
-
             const humanStandingStatEl = document.getElementById('human-standing-stat');
             const humanHealthStatEl = document.getElementById('human-health-stat');
             const humanStabilityStatEl = document.getElementById('human-stability-stat');
             const handCountEl = document.getElementById('hand-count');
-
             const computerStatsEl = document.getElementById('computer-stats');
             const computerStandingStatEl = document.getElementById('computer-standing-stat');
             const computerHealthStatEl = document.getElementById('computer-health-stat');
             const computerStabilityStatEl = document.getElementById('computer-stability-stat');
-
             const modeSoloBtn = document.getElementById('mode-solo');
             const modeVsComputerBtn = document.getElementById('mode-vs-computer');
 
@@ -418,36 +353,64 @@
             const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
             const capValue = (value) => Math.min(100, Math.max(0, value));
 
-            function shuffleArray(array) {
-                for (let i = array.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [array[i], array[j]] = [array[j], array[i]];
-                }
+            function getAbsurdityColor(absurdity) {
+                if (absurdity <= 2) return DYNAMIC_COLORS.absurdityLow;
+                if (absurdity === 3) return DYNAMIC_COLORS.absurdityMid;
+                return DYNAMIC_COLORS.absurdityHigh;
             }
             
+            // Feature 4: Visual Feedback for Stat Changes
+            function flashStat(elementId, delta) {
+                const el = document.getElementById(statusItems[elementId]);
+                if (!el) return;
+                
+                const className = delta > 0 ? 'flashing-green' : 'flashing-red';
+                
+                el.classList.add(className);
+
+                setTimeout(() => {
+                    el.classList.remove(className);
+                }, 1000); // 1 second duration
+            }
+
+
+            function generateWhiteCard() {
+                const adjective = getRandom(ADJECTIVES);
+                const noun = getRandom(NOUNS);
+                const verb = getRandom(VERBS);
+                const context = getRandom(CONTEXTS);
+
+                const text = `${adjective} ${noun}, ${verb} ${context}.`;
+                
+                // Absurdity (1-5)
+                const absurdity = Math.floor(Math.random() * 5) + 1; 
+                const theme = getRandom(THEMES);
+
+                return {
+                    text: text,
+                    absurdity: absurdity,
+                    theme: theme
+                };
+            }
+
             function toggleGameControls(disabled) {
-                // Mode buttons are only enabled *before* a campaign starts or *after* it ends
                 modeSoloBtn.disabled = gameState.currentChapter > 0;
                 modeVsComputerBtn.disabled = gameState.currentChapter > 0;
                 
-                // Start/Reset buttons
                 startGameButtonEl.disabled = false;
                 resetButtonEl.disabled = gameState.currentChapter === 0;
                 
-                // Play button is tied to selection, but disabled if turn is processing
                 const required = gameState.blackCard?.blanks || 1;
                 playCardBtn.disabled = disabled || gameState.selectedCards.length < required;
             }
 
-            // --- Initialization ---
             function initializeGame() {
-                // Determine the current mode from the UI buttons
                 const currentMode = modeVsComputerBtn.classList.contains('selected-mode') ? 'vs-computer' : 'solo';
                 
                 gameState = { ...INITIAL_STATE, gameMode: currentMode }; 
-                gameState.currentChapter = 0; // Ensure chapter is reset
-
-                // Aggressive UI Reset
+                gameState.currentChapter = 0; 
+                gameState.maxStanding = INITIAL_STATE.humanStanding; // Reset max standing
+                
                 submissionAreaEl.classList.add('hidden'); 
                 humanSubmissionEl.innerHTML = '';
                 computerSubmissionEl.innerHTML = '';
@@ -457,79 +420,58 @@
                 gameState.blackCard = null; 
                 renderBlackCard(); 
                 
-                // Button Visibility/State
                 startGameButtonEl.style.display = 'block';
                 playCardBtn.style.display = 'block';
                 
                 isTurnProcessing = false;
-                gameState.isGameOver = false; // Reset game over flag
+                gameState.isGameOver = false; 
 
-                storyHistoryEl.innerHTML = `<p class="history-text-center msg-info">Welcome, Captain Juno Eclipse. Current Mode: **${currentMode === 'solo' ? 'Solo' : 'Vs. Computer'}**. Click **"Start New Campaign"** to begin.</p>`;
+                storyHistoryEl.innerHTML = `<p class="history-text-center msg-info">Welcome, Captain Juno Eclipse. Current Mode: **${currentMode === 'solo' ? 'Solo' : 'Vs. Computer'}**. Combinatorial card potential: **>100 Million**.</p>`;
 
                 updateStats();
                 toggleGameControls(false); 
             }
 
-            // --- Game Logic Functions ---
-
             function startNewGame() {
                 if (isTurnProcessing || gameState.currentChapter > 0) return;
 
-                // 1. Setup Initial State (Reset)
                 const selectedMode = modeVsComputerBtn.classList.contains('selected-mode') ? 'vs-computer' : 'solo';
 
                 gameState = { 
                     ...INITIAL_STATE, 
                     gameMode: selectedMode, 
-                    deck: [...CAH_DATA.whiteCards],
-                    usedBlackCardTexts: []
+                    usedBlackCardTexts: [],
+                    maxStanding: INITIAL_STATE.humanStanding
                 };
-                shuffleArray(gameState.deck);
                 
-                // 2. Lock UI & Reset Visuals
                 isTurnProcessing = false;
                 submissionAreaEl.classList.add('hidden');
                 
-                // 3. Draw & Start Turn 1
                 const introText = gameState.gameMode === 'vs-computer' 
                     ? "Campaign initiated against **The Nexus AI**. Defeat its logic core!"
                     : "Solo Campaign initiated. The fate of the multiverse rests on your chaotic genius.";
                 
                 gameState.history = [{ role: "model", text: introText }];
                 
-                // Update stats early to ensure the computer panel is visible if needed
                 updateStats(); 
                 
                 drawHand(gameState.humanHand);
                 if (gameState.gameMode === 'vs-computer') {
-                    gameState.computerHand = []; // Initialize computer hand
+                    gameState.computerHand = []; 
                     drawHand(gameState.computerHand);
                 }
 
                 drawBlackCard();
-                
                 gameState.selectedCards = [];
-                
                 renderGame();
-                
-                // Lock mode buttons and enable reset
                 toggleGameControls(false); 
                 startGameButtonEl.style.display = 'none';
             }
 
             function drawHand(hand) {
                 while (hand.length < CAH_DATA.HAND_SIZE) {
-                    if (gameState.deck.length === 0) {
-                        gameState.deck = [...CAH_DATA.whiteCards];
-                        shuffleArray(gameState.deck);
-                        gameState.history.push({role: "result", text: `<p class="msg-info">White Card inventory exhausted. Recycling all cards across the Nexus. Draw power restored.</p>`});
-                    }
-                    const card = gameState.deck.pop();
-                    if (card) {
-                        hand.push(card);
-                    } else {
-                        break;
-                    }
+                    const newCard = generateWhiteCard();
+                    hand.push(newCard);
                 }
             }
 
@@ -541,7 +483,7 @@
                 if (availableCards.length === 0) {
                     gameState.usedBlackCardTexts = [];
                     availableCards = CAH_DATA.blackCards; 
-                    gameState.history.push({role: "result", text: `<p class="msg-info">The Black Card mission file was fully exhausted. Recycling all mission parameters. The campaign continues!</p>`});
+                    gameState.history.push({role: "result", text: `<p class="msg-info">Mission file reset. The campaign continues!</p>`});
                 }
 
                 gameState.blackCard = getRandom(availableCards); 
@@ -559,7 +501,6 @@
                 if (gameState.isGameOver || !gameState.blackCard || isTurnProcessing) return;
                 const required = gameState.blackCard.blanks || 1;
                 
-                // Check if the card is actually in the human hand
                 if (!gameState.humanHand.some(c => c.text === card.text)) return; 
 
                 const isCurrentlySelected = gameState.selectedCards.some(c => c.text === card.text);
@@ -570,10 +511,8 @@
                     if (gameState.selectedCards.length < required) {
                         gameState.selectedCards.push(card);
                     } else if (required === 1) {
-                        // Replace the currently selected card
                         gameState.selectedCards = [card];
                     } else {
-                        // For multiple blanks, FIFO: remove the oldest, add the new one.
                         gameState.selectedCards.shift();
                         gameState.selectedCards.push(card);
                     }
@@ -592,13 +531,12 @@
                 
                 let targetAbsurdity;
 
-                // Computer strategy: Adjust target absurdity based on current stats
                 if (gameState.computerStability <= 30) {
-                    targetAbsurdity = 1.5; // Play it safe (low absurdity/canon)
+                    targetAbsurdity = 1.5; 
                 } else if (gameState.computerStanding <= 40) {
-                    targetAbsurdity = 4.5; // Go for a risky, high-reward (high absurdity)
+                    targetAbsurdity = 4.5; 
                 } else {
-                    targetAbsurdity = 3.0; // Balanced/Mid-range
+                    targetAbsurdity = 3.0; 
                 }
 
                 for (let i = 0; i < required; i++) {
@@ -610,12 +548,10 @@
                         const aSynergy = a.theme === blackCardTheme ? 1 : 0;
                         const bSynergy = b.theme === blackCardTheme ? 1 : 0;
                         
-                        // 1. Prioritize theme synergy (AIs love efficiency)
                         if (aSynergy !== bSynergy) {
                             return bSynergy - aSynergy;
                         }
                         
-                        // 2. Prioritize closeness to target absurdity
                         const aDiff = Math.abs(a.absurdity - targetAbsurdity);
                         const bDiff = Math.abs(b.absurdity - targetAbsurdity);
                         return aDiff - bDiff;
@@ -686,7 +622,8 @@
                     resultClass = 'msg-error';
                 }
                 
-                const difficultyMultiplier = 1 + Math.floor(gameState.currentChapter / 10) * 0.2; 
+                // Feature 3: Difficulty Scaling (Multiplier increases by 15% every 5 chapters)
+                const difficultyMultiplier = 1 + Math.floor(gameState.currentChapter / 5) * 0.15; 
                 
                 const finalStandingDelta = Math.round((standingDelta + synergyBonus) * difficultyMultiplier);
                 const finalHealthDelta = Math.round(healthDelta * difficultyMultiplier);
@@ -714,7 +651,7 @@
                 }
                 
                 isTurnProcessing = true;
-                playCardBtn.disabled = true; // Lock the play button immediately
+                playCardBtn.disabled = true; 
 
                 try {
                     const humanCards = gameState.selectedCards;
@@ -726,24 +663,30 @@
                     
                     const LOSER_HEALTH_PENALTY = -15;
                     const LOSER_STABILITY_PENALTY = -5;
+                    
+                    let humanHealthChange = 0;
+                    let humanStabilityChange = 0;
+                    let humanStandingChange = 0;
+                    
+                    let compHealthChange = 0;
+                    let compStabilityChange = 0;
+                    let compStandingChange = 0;
 
-                    // --- Solo Mode Logic ---
+
                     if (gameState.gameMode === 'solo') {
                         winnerOutcome = calculateTurnOutcome(humanCards);
                         
-                        gameState.humanStanding = capValue(gameState.humanStanding + winnerOutcome.standing);
-                        gameState.humanHealth = capValue(gameState.humanHealth + winnerOutcome.health);
-                        gameState.humanStability = capValue(gameState.humanStability + winnerOutcome.stability);
+                        humanStandingChange = winnerOutcome.standing;
+                        humanHealthChange = winnerOutcome.health;
+                        humanStabilityChange = winnerOutcome.stability;
                         
                         winningSubmission = { cards: humanCards, player: 'Juno' };
 
-                    // --- Vs. Computer Mode Logic ---
-                    } else {
+                    } else { // Vs. Computer Mode Logic
                         const humanOutcome = calculateTurnOutcome(humanCards);
                         computerCards = computerPlayCard(); 
                         const computerOutcome = calculateTurnOutcome(computerCards);
                         
-                        // Winner is determined by higher final Absurdity
                         const isHumanWinner = humanOutcome.finalAbsurdity >= computerOutcome.finalAbsurdity;
                         
                         let winner, loser, winnerOutcomeFinal;
@@ -764,28 +707,50 @@
                         
                         winnerOutcome = winnerOutcomeFinal; 
 
-                        // Apply winner's effects (could be positive or negative based on absurdity)
+                        // Apply winner's effects
                         if (winner === 'Juno') {
-                            gameState.humanStanding = capValue(gameState.humanStanding + winnerOutcomeFinal.standing);
-                            gameState.humanHealth = capValue(gameState.humanHealth + winnerOutcomeFinal.health);
-                            gameState.humanStability = capValue(gameState.humanStability + winnerOutcomeFinal.stability);
+                            humanStandingChange = winnerOutcomeFinal.standing;
+                            humanHealthChange = winnerOutcomeFinal.health;
+                            humanStabilityChange = winnerOutcomeFinal.stability;
                         } else {
-                            gameState.computerStanding = capValue(gameState.computerStanding + winnerOutcomeFinal.standing);
-                            gameState.computerHealth = capValue(gameState.computerHealth + winnerOutcomeFinal.health);
-                            gameState.computerStability = capValue(gameState.computerStability + winnerOutcomeFinal.stability);
+                            compStandingChange = winnerOutcomeFinal.standing;
+                            compHealthChange = winnerOutcomeFinal.health;
+                            compStabilityChange = winnerOutcomeFinal.stability;
                         }
                         
                         // Apply loser's penalties
                         if (loser === 'Juno') {
-                            gameState.humanHealth = capValue(gameState.humanHealth + LOSER_HEALTH_PENALTY);
-                            gameState.humanStability = capValue(gameState.humanStability + LOSER_STABILITY_PENALTY);
+                            humanHealthChange += LOSER_HEALTH_PENALTY;
+                            humanStabilityChange += LOSER_STABILITY_PENALTY;
                         } else {
-                            gameState.computerHealth = capValue(gameState.computerHealth + LOSER_HEALTH_PENALTY);
-                            gameState.computerStability = capValue(gameState.computerStability + LOSER_STABILITY_PENALTY);
+                            compHealthChange += LOSER_HEALTH_PENALTY;
+                            compStabilityChange += LOSER_STABILITY_PENALTY;
                         }
                     }
+                    
+                    // Apply all changes to game state
+                    gameState.humanStanding = capValue(gameState.humanStanding + humanStandingChange);
+                    gameState.humanHealth = capValue(gameState.humanHealth + humanHealthChange);
+                    gameState.humanStability = capValue(gameState.humanStability + humanStabilityChange);
+                    gameState.maxStanding = Math.max(gameState.maxStanding, gameState.humanStanding); // Track max standing
 
-                    // --- History Generation (common to both modes) ---
+                    if (gameState.gameMode === 'vs-computer') {
+                        gameState.computerStanding = capValue(gameState.computerStanding + compStandingChange);
+                        gameState.computerHealth = capValue(gameState.computerHealth + compHealthChange);
+                        gameState.computerStability = capValue(gameState.computerStability + compStabilityChange);
+                    }
+
+                    // --- Flash Stats (Feature 4) ---
+                    flashStat('human-health-stat', humanHealthChange);
+                    flashStat('human-standing-stat', humanStandingChange);
+                    flashStat('human-stability-stat', humanStabilityChange);
+                    if (gameState.gameMode === 'vs-computer') {
+                        flashStat('computer-health-stat', compHealthChange);
+                        flashStat('computer-standing-stat', compStandingChange);
+                        flashStat('computer-stability-stat', compStabilityChange);
+                    }
+
+                    // --- History Generation ---
                     let completedText = gameState.blackCard.text;
                     let blankIndex = 0;
                     completedText = completedText.replace(/\[BLANK\]/g, (match) => {
@@ -800,27 +765,25 @@
 
                     let standingText, healthText, stabilityText, historyMessage;
 
-                    if (losingSubmission) {
-                        // Vs. Computer History Message
-                        standingText = `Winner (${winningSubmission.player}): ${winnerOutcome.standing > 0 ? '+' : ''}${winnerOutcome.standing} Standing.`;
+                    if (losingSubmission) { // Vs. Computer History Message
+                        standingText = `Winner (${winningSubmission.player}): ${humanStandingChange > 0 || compStandingChange > 0 ? '+' : ''}${humanStandingChange || compStandingChange} Standing.`;
                         healthText = `Loser (${losingSubmission.player}): ${LOSER_HEALTH_PENALTY}% Hull.`;
                         stabilityText = `Winner (${winningSubmission.player}): ${winnerOutcome.stability > 0 ? '+' : ''}${winnerOutcome.stability} Stability. (Loser: ${LOSER_STABILITY_PENALTY} Stability)`;
 
                         historyMessage = 
                             `<p class="msg-info">The winning outcome, submitted by <strong>${winningSubmission.player}</strong>: ${completedText}</p>
                             <p>Avg. Absurdity: ${winnerOutcome.finalAbsurdity.toFixed(1)}/5. ${synergyMsg} Multiverse Impact: ${winnerOutcome.loreViolation}</p>
-                            <p>${standingText} | ${healthText} | ${stabilityText}</p>
+                            <p>${standingText} | ${healthText} | ${stabilityText} | Multiplier: x${(1 + Math.floor((gameState.currentChapter -1) / 5) * 0.15).toFixed(2)}</p>
                             <p class="${winnerOutcome.resultClass}">${winnerOutcome.resultMessage}</p>`;
-                    } else {
-                        // Solo Mode History Message
-                        standingText = `Standing: ${winnerOutcome.standing > 0 ? '+' : ''}${winnerOutcome.standing}`;
-                        healthText = `Hull: ${winnerOutcome.health > 0 ? '+' : ''}${winnerOutcome.health}`;
-                        stabilityText = `Stability: ${winnerOutcome.stability > 0 ? '+' : ''}${winnerOutcome.stability}`;
+                    } else { // Solo Mode History Message
+                        standingText = `Standing: ${humanStandingChange > 0 ? '+' : ''}${humanStandingChange}`;
+                        healthText = `Hull: ${humanHealthChange > 0 ? '+' : ''}${humanHealthChange}`;
+                        stabilityText = `Stability: ${humanStabilityChange > 0 ? '+' : ''}${humanStabilityChange}`;
 
                         historyMessage = 
                             `<p class="msg-info">The resulting scenario: ${completedText}</p>
                             <p>Avg. Absurdity: ${winnerOutcome.finalAbsurdity.toFixed(1)}/5. ${synergyMsg} Multiverse Impact: ${winnerOutcome.loreViolation}</p>
-                            <p>${standingText} | ${healthText} | ${stabilityText}</p>
+                            <p>${standingText} | ${healthText} | ${stabilityText} | Multiplier: x${(1 + Math.floor((gameState.currentChapter -1) / 5) * 0.15).toFixed(2)}</p>
                             <p class="${winnerOutcome.resultClass}">${winnerOutcome.resultMessage}</p>`;
                     }
 
@@ -839,7 +802,7 @@
                     }
 
                     submissionAreaEl.classList.remove('hidden');
-                    handAreaEl.innerHTML = ''; // Clear hand while outcome is visible
+                    handAreaEl.innerHTML = ''; 
                     
                     renderHistory();
                     updateStats();
@@ -850,7 +813,6 @@
                         humanSubmissionEl.innerHTML = '';
                         computerSubmissionEl.innerHTML = '';
                         
-                        // Remove submitted cards from hands
                         gameState.humanHand = gameState.humanHand.filter(c => !humanCards.some(pc => pc.text === c.text));
                         
                         if (gameState.gameMode === 'vs-computer') {
@@ -869,16 +831,14 @@
                         
                         gameState.selectedCards = [];
                         
-                        // Reset the lock BEFORE rendering the next turn
                         isTurnProcessing = false; 
                         
                         renderGame(); 
                         
-                        // Re-enable play button based on new selection count
                         playCardBtn.disabled = (gameState.selectedCards.length < (gameState.blackCard.blanks || 1)); 
                         
-                        toggleGameControls(false); // Unlock controls (mode buttons remain locked by chapter count check)
-                    }, 3500); // Delay for better readability of the outcome
+                        toggleGameControls(false); 
+                    }, 3500); 
                 } catch (error) {
                     console.error("Critical error during turn processing:", error);
                     storyHistoryEl.innerHTML += `<p class="history-result text-sm msg-error">A CRITICAL SCRIPT ERROR OCCURRED! Please reset the campaign. Check console for details.</p>`;
@@ -889,23 +849,51 @@
             }
 
             function checkEndGame() {
-                // Check Human Loss Conditions
                 if (gameState.humanHealth <= 0 || gameState.humanStability <= 0 || gameState.humanStanding <= 10) {
                     let message = "GAME OVER";
                     if (gameState.humanHealth <= 0) message = "Juno Eclipse, Hull Integrity compromised! The ship failed to survive the paradox. **GAME OVER**.";
                     else if (gameState.humanStanding <= 10) message = "Juno's chaotic methods caused a catastrophic loss of credibility. You are grounded by a joint tribunal. **GAME OVER**.";
                     else if (gameState.humanStability <= 0) message = "Temporal Stability Reached 0%! The paradox ripple erased your ship and crew from history. **TIMELINE PARADOX**.";
-                    endGame(message, false); // False for a loss condition
+                    endGame(message, false); 
                     return true;
                 } 
                 
-                // Check Vs. Computer Win Conditions
                 if (gameState.gameMode === 'vs-computer' && (gameState.computerHealth <= 0 || gameState.computerStability <= 0 || gameState.computerStanding <= 10)) {
                     let message = `Victory! The Nexus AI's core was destroyed by its own illogical submissions. **Juno Eclipse Triumphs!**`;
-                    endGame(message, true); // True for a win condition
+                    endGame(message, true); 
                     return true;
                 }
                 return false;
+            }
+
+            // Feature 2: End-Game Score Summary
+            function endGame(message, isWin) {
+                gameState.isGameOver = true;
+                handAreaEl.innerHTML = '';
+                
+                const condition = message.split(':')[0];
+
+                const summaryHTML = `
+                    <div class="mt-4 p-4 rounded-lg text-left" style="background-color: #111827; border: 1px solid ${isWin ? DYNAMIC_COLORS.success : DYNAMIC_COLORS.error};">
+                        <h4 class="font-bold text-lg mb-2" style="color:${isWin ? DYNAMIC_COLORS.success : DYNAMIC_COLORS.error};">Campaign Summary</h4>
+                        <p><strong>Total Chapters Survived:</strong> ${gameState.currentChapter}</p>
+                        <p><strong>Max Rebel Standing Achieved:</strong> ${gameState.maxStanding}/100</p>
+                        <p><strong>Final Hull Integrity:</strong> ${gameState.humanHealth}%</p>
+                        <p><strong>Game Over Condition:</strong> ${condition}</p>
+                    </div>
+                `;
+
+                blackCardTextEl.innerHTML = `<div class="end-game-message" style="color:${isWin ? DYNAMIC_COLORS.success : DYNAMIC_COLORS.error};">${message}</div>${summaryHTML}`;
+                blackCardDisplayEl.style.backgroundColor = '#2c3545';
+                blackCardDisplayEl.style.color = DYNAMIC_COLORS.text; 
+                blackCardDisplayEl.classList.remove('black-card');
+                blackCardDisplayEl.classList.add('game-over-display');
+
+                playCardBtn.style.display = 'none';
+                
+                startGameButtonEl.style.display = 'block';
+                toggleGameControls(false); 
+                resetButtonEl.disabled = false;
             }
 
             // --- Rendering and UI Updates ---
@@ -919,11 +907,17 @@
                     const textDiv = document.createElement('div');
                     textDiv.textContent = card.text;
                     
+                    const absurdityEl = document.createElement('div');
+                    absurdityEl.classList.add('absurdity-rating');
+                    absurdityEl.textContent = `Absurdity: ${card.absurdity}/5`;
+                    absurdityEl.style.color = getAbsurdityColor(card.absurdity);
+                    
                     const tagDiv = document.createElement('div');
                     tagDiv.classList.add('card-theme-tag');
-                    tagDiv.textContent = `Absurdity: ${card.absurdity} | Theme: ${card.theme || 'CANON'}`;
+                    tagDiv.textContent = `Theme: ${card.theme || 'CANON'}`;
                     
                     cardEl.appendChild(textDiv);
+                    cardEl.appendChild(absurdityEl);
                     cardEl.appendChild(tagDiv);
                     targetEl.appendChild(cardEl);
                 });
@@ -951,7 +945,6 @@
                     }
                     storyHistoryEl.appendChild(p);
                 });
-                // Always scroll to bottom for real-time feed
                 storyHistoryEl.scrollTop = storyHistoryEl.scrollHeight;
             }
 
@@ -995,7 +988,6 @@
                     const required = gameState.blackCard.blanks || 1;
                     const info = `<div class="required-cards-info">Theme: ${gameState.blackCard.theme || 'CANON'} | Requires: ${required} card${required > 1 ? 's' : ''}</div>`;
                     
-                    // Update button text for card count
                     playCardBtn.textContent = `Play Chosen Card${required > 1 ? 's' : ''}`; 
 
                     blackCardTextEl.innerHTML = `<div class="text-center font-bold text-lg">${text}</div> ${info}`;
@@ -1004,6 +996,7 @@
                 }
             }
 
+            // Feature 1: Absurdity Indicator in hand
             function renderStrategyHand() {
                 if (submissionAreaEl.classList.contains('hidden') && !isTurnProcessing) { 
                     handAreaEl.innerHTML = '';
@@ -1017,11 +1010,17 @@
                         const textDiv = document.createElement('div');
                         textDiv.textContent = card.text;
                         
+                        const absurdityEl = document.createElement('div');
+                        absurdityEl.classList.add('absurdity-rating');
+                        absurdityEl.textContent = `Absurdity: ${card.absurdity}/5`;
+                        absurdityEl.style.color = getAbsurdityColor(card.absurdity);
+                        
                         const tagDiv = document.createElement('div');
                         tagDiv.classList.add('card-theme-tag');
-                        tagDiv.textContent = `Absurdity: ${card.absurdity} | Theme: ${card.theme || 'CANON'}`;
+                        tagDiv.textContent = `Theme: ${card.theme || 'CANON'}`;
                         
                         cardEl.appendChild(textDiv);
+                        cardEl.appendChild(absurdityEl);
                         cardEl.appendChild(tagDiv);
                         
                         const isSelected = gameState.selectedCards.some(c => c.text === card.text);
@@ -1041,10 +1040,8 @@
             }
 
             function setModeUI(mode) {
-                // Only allow mode changes if the game hasn't started (chapter 0) or is over
                 if (gameState.currentChapter > 0 && !gameState.isGameOver) return; 
 
-                // Update button classes
                 modeSoloBtn.classList.remove('selected-mode');
                 modeVsComputerBtn.classList.remove('selected-mode');
                 
@@ -1054,48 +1051,19 @@
                     modeVsComputerBtn.classList.add('selected-mode');
                 }
 
-                // Always re-initialize to ensure a clean state when switching modes pre-game
                 initializeGame(); 
             }
 
-            function endGame(message, isWin) {
-                gameState.isGameOver = true;
-                handAreaEl.innerHTML = '';
-                
-                blackCardTextEl.innerHTML = `<div class="end-game-message" style="color:${isWin ? DYNAMIC_COLORS.success : DYNAMIC_COLORS.error};">${message}</div>`;
-                blackCardDisplayEl.style.backgroundColor = '#2c3545';
-                blackCardDisplayEl.style.color = DYNAMIC_COLORS.text; 
-                blackCardDisplayEl.classList.remove('black-card');
-                blackCardDisplayEl.classList.add('game-over-display');
-
-                playCardBtn.style.display = 'none';
-                
-                // Allow mode change and new game start
-                startGameButtonEl.style.display = 'block';
-                toggleGameControls(false); 
-                
-                // Make sure reset is still enabled if they lost mid-game
-                resetButtonEl.disabled = false;
-            }
-
             // --- Event Listeners and Initialization ---
-
-            // Use standard DOMContentLoaded listener
             document.addEventListener('DOMContentLoaded', function() {
-                // Attach main event listeners
                 modeSoloBtn.addEventListener('click', () => setModeUI('solo'));
                 modeVsComputerBtn.addEventListener('click', () => setModeUI('vs-computer'));
                 
-                // Use initializeGame for a clean, full reset
                 resetButtonEl.addEventListener('click', initializeGame); 
-                
-                // Use startNewGame only for the actual campaign launch
                 startGameButtonEl.addEventListener('click', startNewGame);
                 
-                // Play turn button
                 playCardBtn.addEventListener('click', playTurn);
 
-                // Initial setup
                 initializeGame();
             });
         })();

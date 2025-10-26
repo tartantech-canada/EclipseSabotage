@@ -6,9 +6,8 @@
     <title>Juno Eclipse: The Infinite Nexus Sabotage</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* --- Custom CSS for The Juno Eclipse Game --- */
-        /* --- Global Variables & Resets --- */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        /* --- Animated Space Background --- */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;700;900&display=swap');
 
         :root {
             --color-primary: #8b5cf6; /* Violet */
@@ -22,11 +21,49 @@
             --color-error: #ef4444; /* Red */
             --color-temporal: #f472b6; /* Pink for Stability */
         }
-
-        /* --- WP Safety: Apply global styles directly to the game container's parent */
-        #game-outer-wrapper {
-            background-color: #0d1117; /* Dark background */
+        
+        body {
             font-family: 'Inter', sans-serif;
+            background-color: #000000;
+            color: var(--color-text);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Starfield Animation */
+        .starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(200% 100% at 50% 100%, #171717, #000000);
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle linear infinite;
+        }
+
+        /* Function to generate random star properties for a nice spread */
+        @keyframes twinkle {
+            0% { opacity: 0.1; transform: scale(0.5); }
+            50% { opacity: 0.8; transform: scale(1); }
+            100% { opacity: 0.1; transform: scale(0.5); }
+        }
+
+        /* Generate 100 stars with unique properties via JS (see below) or simplified with generic classes */
+        .star-small { width: 1px; height: 1px; animation-duration: 2s; animation-delay: 0s; }
+        .star-medium { width: 2px; height: 2px; animation-duration: 3s; animation-delay: 1s; }
+        .star-large { width: 3px; height: 3px; animation-duration: 4s; animation-delay: 2s; }
+
+        /* --- Custom CSS for The Juno Eclipse Game (Re-included for self-contained functionality) --- */
+        #game-outer-wrapper {
             width: 100%;
             padding: 20px 0;
             position: relative; 
@@ -37,125 +74,43 @@
             max-width: 900px;
             margin: 0 auto;
             padding: 20px;
-            background-color: var(--color-background);
+            background-color: rgba(31, 41, 55, 0.95); /* Dark Slate with slight transparency */
             color: var(--color-text);
             border-radius: 12px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7);
+            box-shadow: 0 0 40px rgba(139, 92, 246, 0.2); /* Soft violet glow */
+            border: 1px solid #374151;
         }
 
         #game-container-wp h1 {
+            font-family: 'Orbitron', sans-serif;
             text-align: center;
             color: var(--color-primary);
             margin-bottom: 20px;
-            font-size: 1.8rem;
+            font-size: 2.2rem;
             font-weight: 900;
-            text-shadow: 0 0 5px rgba(139, 92, 246, 0.7);
+            text-shadow: 0 0 10px rgba(139, 92, 246, 0.8);
         }
 
-        /* --- Status Bar and Flashing Animations --- */
+        .status-item {
+            padding: 2px 0;
+            transition: background-color 0.1s;
+        }
         @keyframes flash-green {
             0%, 100% { background-color: transparent; }
-            50% { background-color: rgba(52, 211, 153, 0.4); } /* Success */
+            50% { background-color: rgba(52, 211, 153, 0.4); }
         }
         @keyframes flash-red {
             0%, 100% { background-color: transparent; }
-            50% { background-color: rgba(239, 68, 68, 0.4); } /* Error */
+            50% { background-color: rgba(239, 68, 68, 0.4); }
         }
-        
-        .status-item {
-            padding: 2px 0;
-            transition: background-color 0.1s; /* Smooth transition for status item changes */
-        }
-        .status-item.flashing-green {
-            animation: flash-green 0.5s ease-out 2;
-        }
-        .status-item.flashing-red {
-            animation: flash-red 0.5s ease-out 2;
-        }
-        
-        .status-block {
-            background-color: #374151;
-            padding: 12px;
-            border-radius: 8px;
-            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
-            border: 1px solid #4b5563;
-        }
-
-        /* --- Mode Selection --- */
-        #mode-selection button {
-            padding: 8px 15px;
-            border-radius: 9999px; 
-            border: 2px solid var(--color-primary);
-            background-color: transparent;
-            color: var(--color-text);
-            cursor: pointer;
-            transition: all 0.2s;
-            margin: 0 5px;
-            font-weight: 600;
-            user-select: none;
-        }
-
-        #mode-selection button.selected-mode {
-            background-color: var(--color-primary);
-            border-color: #c4b5fd;
-            box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
-        }
-
-        /* --- Black Card --- */
-        .black-card {
-            background-color: var(--color-secondary);
-            color: var(--color-text);
-            padding: 20px;
-            border-radius: 8px;
-            min-height: 120px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
-        }
-
-        /* --- White Cards --- */
-        .white-card {
-            background-color: var(--color-card-bg);
-            color: var(--color-secondary);
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid var(--color-card-border);
-            flex: 1 1 calc(33.333% - 10px);
-            min-width: 150px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            user-select: none;
-        }
-        
-        /* Absurdity Display Styling */
-        .absurdity-rating {
-            font-weight: bold;
-            font-size: 0.75rem;
-            padding: 2px 0;
-        }
-
-        .white-card.selected {
-            border: 3px solid var(--color-primary);
-            background-color: #e0f2fe;
-            box-shadow: 0 0 15px var(--color-primary);
-        }
-
-        .card-theme-tag {
-            font-size: 0.7rem;
-            color: #6b7280;
-            text-align: right;
-            margin-top: 8px;
-            border-top: 1px dashed #e5e7eb;
-            padding-top: 5px;
-        }
-        
-        /* Story History styles (unchanged but critical) */
+        .status-item.flashing-green { animation: flash-green 0.5s ease-out 2; }
+        .status-item.flashing-red { animation: flash-red 0.5s ease-out 2; }
+        .status-block { background-color: #374151; padding: 12px; border-radius: 8px; box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3); border: 1px solid #4b5563; }
+        .black-card { background-color: var(--color-secondary); color: var(--color-text); padding: 20px; border-radius: 8px; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6); }
+        .white-card { background-color: var(--color-card-bg); color: var(--color-secondary); padding: 12px; border-radius: 8px; border: 1px solid var(--color-card-border); flex: 1 1 calc(33.333% - 10px); min-width: 150px; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; justify-content: space-between; font-size: 0.9rem; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); user-select: none; }
+        .absurdity-rating { font-weight: bold; font-size: 0.75rem; padding: 2px 0; }
+        .white-card.selected { border: 3px solid var(--color-primary); background-color: #e0f2fe; box-shadow: 0 0 15px var(--color-primary); }
+        .card-theme-tag { font-size: 0.7rem; color: #6b7280; text-align: right; margin-top: 8px; border-top: 1px dashed #e5e7eb; padding-top: 5px; }
         #story-history { max-height: 200px; overflow-y: auto; padding: 10px; border: 1px solid #4b5563; border-radius: 8px; background-color: #2c3545; }
         #story-history::-webkit-scrollbar { width: 8px; }
         #story-history::-webkit-scrollbar-thumb { background: #525252; border-radius: 10px; }
@@ -167,35 +122,78 @@
         .msg-error { color: var(--color-error); font-weight: bold; }
         .msg-synergy { color: #5eead4; }
 
-        /* Responsive Adjustments (Mobile First) */
         @media (max-width: 600px) {
-            .white-card {
-                flex: 1 1 calc(50% - 10px); 
-            }
+            .white-card { flex: 1 1 calc(50% - 10px); }
         }
     </style>
 </head>
 <body>
+    
+    <!-- Animated Starfield Background -->
+    <div class="starfield" id="starfield"></div>
+
     <div id="game-outer-wrapper">
-        <div id="game-container-wp" class="mx-auto p-4 md:p-8">
-            <h1>Juno Eclipse: The Infinite Nexus Sabotage</h1>
+        <div id="game-container-wp" class="mx-auto">
             
-            <div id="mode-selection" class="text-center mb-4 flex justify-center space-x-4">
-                <button id="mode-solo" class="selected-mode">Solo Mode</button>
-                <button id="mode-vs-computer">Vs. Computer Mode</button>
+            <header class="text-center pb-8 border-b border-violet-700 mb-6">
+                <h1 class="text-3xl md:text-5xl">JUNO ECLIPSE</h1>
+                <p class="text-xl md:text-2xl text-violet-400 font-bold">The Infinite Nexus Sabotage</p>
+            </header>
+            
+            <!-- Game Description and Instructions -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+                
+                <div class="md:col-span-2 space-y-4">
+                    <h2 class="text-2xl font-bold text-violet-300">The Mission Briefing</h2>
+                    <p class="text-gray-300">You are **Juno Eclipse**, the galaxy's most chaotic and effective temporal infiltrator. The **Nexus AI** is attempting to stabilize the multiverse by enforcing canon and logic. Your job is simple: **Inject enough high-tier absurdity into pivotal spacetime events to fracture its control, all while maintaining a credible front.**</p>
+                    <p class="text-gray-300">This is a high-stakes, **choose-your-own-chaos** card game. Choose the right level of absurdity and theme to maximize your **Rebel Standing** without destroying your ship (**Hull Integrity**) or dissolving reality (**Temporal Stability**).</p>
+                    
+                    <h2 class="text-2xl font-bold text-violet-300 pt-4">Instructions:</h2>
+                    <ul class="list-disc list-inside text-gray-300 space-y-2 pl-4">
+                        <li>**Objective:** Survive as many chapters as possible, achieving the highest **Rebel Standing** score.</li>
+                        <li>**The Crisis (Black Card):** A new scenario appears, usually tied to a specific **Theme** (SW, ST, ME, etc.).</li>
+                        <li>**The Response (White Cards):** Select one or more cards from your hand to complete the Black Card text.</li>
+                        <li>**Strategy (Absurdity):** Each White Card has a hidden **Absurdity Score (1-5)**, now displayed on the card.
+                            <ul class="list-disc list-inside ml-6 text-sm text-gray-400">
+                                <li>**Low Absurdity (1-2):** Safe, but often too 'canon,' leading to failure and damage.</li>
+                                <li>**High Absurdity (4-5):** High risk, but if successful, huge **Standing** gains. High risk of catastrophic failure.</li>
+                            </ul>
+                        </li>
+                        <li>**Synergy:** Matching your card's theme to the Black Card's theme grants a **Standing Bonus**.</li>
+                        <li>**Game Over:** You lose if your **Hull Integrity** or **Temporal Stability** hits 0%, or if **Rebel Standing** falls below 10.</li>
+                    </ul>
+                </div>
+
+                <div class="md:col-span-1 flex justify-center items-start pt-4">
+                    <figure class="flex flex-col items-center">
+                        <!-- Caption (Text) placed first, as requested -->
+                        <figcaption class="text-center text-sm italic mb-4 text-violet-400">Juno Eclipse prepares a new temporal sabotage</figcaption>
+                        <!-- Image placed below the caption -->
+                        
+                    </figure>
+                </div>
+            </div>
+            
+            <hr class="border-violet-700 my-6">
+
+            <!-- --- GAME START --- -->
+            
+            <div class="text-center mb-4 flex justify-center space-x-4">
+                <button id="mode-solo" class="selected-mode bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded-full transition-all duration-200">Solo Mode</button>
+                <button id="mode-vs-computer" class="bg-gray-700 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded-full transition-all duration-200">Vs. Computer Mode</button>
             </div>
 
             <!-- Status Bar -->
             <div id="status-bar" class="flex flex-col md:flex-row justify-between gap-3 mb-6">
                 <div class="status-block flex-1">
-                    <h3>Juno Eclipse (You)</h3>
+                    <h3 class="font-bold text-lg text-violet-300">Juno Eclipse (You)</h3>
                     <div class="status-item text-sm" id="chapter-item">Chapter: <span id="chapter-count" class="font-mono text-lg text-yellow-300">0</span></div>
                     <div class="status-item text-sm" id="health-item">Hull Integrity: <span id="human-health-stat" class="font-mono text-lg">100%</span></div>
                     <div class="status-item text-sm" id="standing-item">Rebel Standing: <span id="human-standing-stat" class="font-mono text-lg">60</span></div>
                     <div class="status-item text-sm" id="stability-item">Stability: <span id="human-stability-stat" class="font-mono text-lg">100%</span></div>
                 </div>
                 <div class="status-block hidden flex-1" id="computer-stats">
-                    <h3>The Nexus AI (Opponent)</h3>
+                    <h3 class="font-bold text-lg text-red-400">The Nexus AI (Opponent)</h3>
                     <div class="status-item text-sm" id="comp-health-item">Hull Integrity: <span id="computer-health-stat" class="font-mono text-lg">100%</span></div>
                     <div class="status-item text-sm" id="comp-standing-item">Control Standing: <span id="computer-standing-stat" class="font-mono text-lg">60</span></div>
                     <div class="status-item text-sm" id="comp-stability-item">Stability: <span id="computer-stability-stat" class="font-mono text-lg">100%</span></div>
@@ -220,51 +218,69 @@
                     <div id="computer-submission" class="flex flex-wrap gap-2"></div>
                 </div>
 
-                <h2 id="hand-title" class="hand-title text-yellow-300 font-bold">Your Hand (<span id="hand-count">0</span> Cards)</h2>
-                <div id="hand-area" class="flex flex-wrap gap-2 mb-4"></div>
+                <h2 id="hand-title" class="hand-title text-violet-400 font-bold text-xl mb-3">Your Hand (<span id="hand-count">0</span> Cards)</h2>
+                <div id="hand-area" class="flex flex-wrap justify-center gap-3 mb-4"></div>
                 
-                <button id="play-card-btn" class="play-button bg-violet-600 hover:bg-violet-700 text-white w-full py-3 mb-4 rounded-lg shadow-lg" disabled>
+                <button id="play-card-btn" class="play-button bg-violet-600 hover:bg-violet-700 text-white w-full py-3 mb-4 rounded-lg shadow-xl font-extrabold transition-all duration-200" disabled>
                     Play Chosen Card(s)
                 </button>
             </div>
             
             <!-- Action Buttons -->
             <div class="action-buttons flex justify-between gap-3 mt-6">
-                <button id="start-game-btn" class="choice-button bg-green-600 hover:bg-green-700 text-white flex-1 py-3 rounded-lg shadow-md">
+                <button id="start-game-btn" class="choice-button bg-green-600 hover:bg-green-700 text-white flex-1 py-3 rounded-lg shadow-md font-bold transition-all duration-200">
                     Start New Campaign
                 </button>
-                <button id="reset-game-btn" class="choice-button reset-button bg-red-600 hover:bg-red-700 text-white flex-1 py-3 rounded-lg shadow-md" disabled>
+                <button id="reset-game-btn" class="choice-button reset-button bg-red-600 hover:bg-red-700 text-white flex-1 py-3 rounded-lg shadow-md font-bold transition-all duration-200" disabled>
                     Restart Campaign
                 </button>
             </div>
+
+            <!-- --- END GAME --- -->
+            
         </div>
     </div>
     
-    <!-- JavaScript Logic -->
+    <!-- JavaScript Logic (Includes Game Logic and Starfield Initialization) -->
     <script>
         (function() {
             
-            // --- Configuration ---
+            // --- Starfield Initialization ---
+            const starfieldEl = document.getElementById('starfield');
+            const NUM_STARS = 150;
+            for (let i = 0; i < NUM_STARS; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                const size = Math.random() < 0.8 ? 'star-small' : (Math.random() < 0.5 ? 'star-medium' : 'star-large');
+                star.classList.add(size);
+                star.style.top = `${Math.random() * 100}vh`;
+                star.style.left = `${Math.random() * 100}vw`;
+                star.style.animationDelay = `${Math.random() * 5}s`; 
+                star.style.animationDuration = `${2 + Math.random() * 3}s`;
+                starfieldEl.appendChild(star);
+            }
+
+            
+            // --- Configuration (Same as previous file) ---
             const DYNAMIC_COLORS = {
                 temporal: '#f472b6', 
                 error: '#ef4444', 
                 warning: '#fcd34d',
                 success: '#34d399',
-                // For absurdity display
-                absurdityLow: '#10b981', // green-500
-                absurdityMid: '#f59e0b', // amber-500
-                absurdityHigh: '#ef4444' // red-500
+                absurdityLow: '#10b981', 
+                absurdityMid: '#f59e0b', 
+                absurdityHigh: '#ef4444' 
             };
             const THEMES = ['SW', 'ST', 'ME', 'SG', 'WHO', 'FIREFLY', 'ALIEN', 'SC', 'LOVECRAFT', 'RANDOM', 'CANON'];
             
             // --- Combinatorial Card Generation Arrays (Trillions in potential combinations) ---
             const ADJECTIVES = ["A tiny", "A weeping", "A sentient", "The final", "An anti-gravity", "A laser-guided", "A holographic", "A malfunctioning", "A highly concentrated", "The crushing", "A rogue", "A porcelain", "An emotionally supportive", "A Volus-sized", "A Krill-based", "An easily confused", "A sentient", "A radioactive", "A perfectly formed", "The terrifying", "A glitter-covered", "A fully functional", "A perpetually bored", "A secretly ambitious", "A suspiciously damp", "An awkward", "The unspeakable", "A sentient", "A rogue", "A single, misplaced", "The horrifying truth of", "A morally ambiguous", "A deeply unsettling", "A hyper-intelligent", "A surprisingly rude", "An entire crate of", "A tiny pair of", "A caffeinated", "A heavily encrypted", "The existential dread of", "An overly dramatic", "A mysteriously damp", "A freshly laundered", "A genetically modified", "An inexplicable, powerful", "A time-displaced", "A morally bankrupt", "A dangerously flammable", "A subtly racist", "An adorable, yet deadly", "A technologically stunted", "A dangerously unstable", "A musically gifted", "A perpetually confused", "A shockingly clean", "A surprisingly sticky", "An ancient, forgotten", "A recently upgraded", "A deeply philosophical", "A suspiciously crunchy", "A non-Euclidean", "The unsettling scent of", "A perpetually surprised", "A slightly melted", "A meticulously calibrated", "A poorly translated", "A vaguely cylindrical", "A politically motivated", "A spontaneously generated", "An emotionally crippled", "A heavily insured", "A digitally preserved", "A physically incapable", "A deceptively simple", "A violently purple", "An economically unsound", "A technologically advanced", "A remarkably bland", "A psychologically damaging", "A cosmically indifferent", "An absurdly expensive", "A criminally underrated", "A universally despised", "A subtly humming", "A surprisingly comfortable", "A geometrically impossible", "A socially inept", "A highly suspicious", "A strangely familiar", "A deceptively bouncy", "An unnecessarily large", "A perpetually glistening", "A disturbingly quiet", "A brightly colored", "An unexpectedly potent", "A strategically placed", "A rhythmically pulsing", "A theoretically sound", "A tragically misplaced"];
             
-            const NOUNS = ["Sarlacc Pit", "Tribble", "Gonky Droid", "Jar Jar Binks' sock", "Transporter Chief's coffee cup", "Klingon opera score", "Vorlon Ambassador's wig", "Sonic Screwdriver", "TARDIS key", "Reaper heart", "Volus credit chip", "Mandalorian helmet", "Xenomorph plushie", "Zerg larva", "Stargate power conduit", "Goa'uld snakehead", "Shiny piece of aluminum foil", "Wookiee hairball", "Borg drone's favorite snack", "Jaffa warrior's tear", "Reaver corpse", "Elder Sign", "Mister Potato Head", "Crate of redundant red shirts", "Garrus's calibration schedule", "Sentient pair of pants", "Sentient knitted hat", "Last remaining slice of pizza", "Giant foam finger", "Rubber chicken with a pulley in the middle", "Holodeck safety protocol", "Primary buffer panel", "Deck scrubber", "Fez", "Bow tie", "Bad Wolf graffiti", "Bacta tank drainage plug", "Thermal detonator", "Unidentified green goo", "A stack of ancient data rods", "A particularly noisy modem", "A rogue AI's mood ring", "A microscopic black hole", "A highly aggressive chihuahua", "A three-legged space badger", "A container of emergency glitter", "A universal remote control", "A malfunctioning replicator", "A broken pocket watch", "A very confused Tribble", "A single, powerful sneeze", "A misplaced infinity stone", "A pair of reading glasses", "A worn out VHS tape", "A bucket of spare parts", "A forgotten sandwich", "A deeply philosophical Roomba", "A sentient sock puppet", "A genetically engineered squirrel", "A perfectly ripe banana", "A small, quiet kitten", "A massive ball of twine", "A holographic llama", "A tiny spaceship blueprint", "A cosmic rubber duck", "A mysterious crystal skull", "A jar of pickled onions", "A perfectly circular pebble", "A digital ghost", "A highly polished spoon", "A velvet painting of Elvis", "A map to nowhere", "A rusty can opener", "A singing fish toy", "A portable black hole generator", "A pair of mismatched gloves", "A jar of space jam", "A self-aware rubber band", "A miniature Death Star replica", "A very loud harmonica", "A slightly used broomstick", "A mysterious box of donuts", "A forgotten lucky charm", "A handful of cosmic dust", "A self-sealing body bag", "A slightly toxic cupcake", "A perpetually spinning top", "A tiny, aggressive ferret", "A highly durable napkin", "A suspiciously clean spork", "A digitally enhanced echo", "A time-traveling goldfish", "A ceremonial battle-spatula", "A perpetually echoing whisper", "A discarded piece of popcorn", "A perfectly normal rock"];
+            const NOUNS = ["Sarlacc Pit", "Tribble", "Gonky Droid", "Jar Jar Binks' sock", "Transporter Chief's coffee cup", "Klingon opera score", "Vorlon Ambassador's wig", "Sonic Screwdriver", "TARDIS key", "Reaper heart", "Volus credit chip", "Mandalorian helmet", "Xenomorph plushie", "Zerg larva", "Stargate power conduit", "Goa'uld snakehead", "Shiny piece of aluminum foil", "Wookiee hairball", "Borg drone's favorite snack", "Jaffa warrior's tear", "Reaver corpse", "Elder Sign", "Mister Potato Head", "Crate of redundant red shirts", "Garrus's calibration schedule", "Sentient pair of pants", "Sentient knitted hat", "Last remaining slice of pizza", "Giant foam finger", "Rubber chicken with a pulley in the middle", "Holodeck safety protocol", "Primary buffer panel", "Deck scrubber", "Fez", "Bow tie", "Bad Wolf graffiti", "Bacta tank drainage plug", "Thermal detonator", "Unidentified green goo", "A stack of ancient data rods", "A particularly noisy modem", "A rogue AI's mood ring", "A microscopic black hole", "A highly aggressive chihuahua", "A three-legged space badger", "A container of emergency glitter", "A universal remote control", "A malfunctioning replicator", "A broken pocket watch", "A very confused Tribble", "A single, powerful sneeze", "A misplaced infinity stone", "A pair of reading glasses", "A worn out VHS tape", "A bucket of spare parts", "A forgotten sandwich", "A deeply philosophical Roomba", "A sentient sock puppet", "A genetically engineered squirrel", "A perfectly ripe banana", "A small, quiet kitten", "A massive ball of twine", "A holographic llama", "A tiny spaceship blueprint", "A cosmic rubber duck", "A mysterious crystal skull", "A jar of pickled onions", "A perfectly circular pebble", "A digital ghost", "A highly polished spoon", "A velvet painting of Elvis", "A map to nowhere", "A rusty can opener", "A singing fish toy", "A portable black hole generator", "A pair of mismatched gloves", "A jar of space jam", "A self-aware rubber band", "A miniature Death Star replica", "A very loud harmonica", "A mysterious box of donuts", "A forgotten lucky charm", "A handful of cosmic dust", "A self-sealing body bag", "A slightly toxic cupcake", "A perpetually spinning top", "A tiny, aggressive ferret", "A highly durable napkin", "A suspiciously clean spork", "A digitally enhanced echo", "A time-traveling goldfish", "A ceremonial battle-spatula", "A perpetually echoing whisper", "A discarded piece of popcorn", "A perfectly normal rock"];
 
             const VERBS = ["debating", "flossing", "calibrating", "singing", "disassembling", "negotiating", "interrogating", "replicating", "erasing", "wrestling", "romancing", "attempting to fix", "explaining the plot of", "baking a cake shaped like", "performing interpretive dance for", "wearing a tiny hat while", "shouting obscenities at", "rearranging the contents of", "sincerely apologizing to", "demanding a refund for", "ignoring the advice of", "threatening with a lecture on", "writing a passive-aggressive note about", "secretly admiring", "trying to parallel park with", "getting surprisingly emotional about", "blaming the entire crisis on", "teaching basic calculus to", "forcing everyone to listen to", "engaging in a rap battle with", "performing surgery on", "hiding inside", "arguing with", "carefully cataloging", "enthusiastically greeting", "sincerely regretting", "unnecessarily explaining", "aggressively staring at", "gently caressing", "confidently mispronouncing", "frantically searching for", "relentlessly mocking", "inadvertently activating", "professionally reviewing", "violently shaking", "mysteriously transforming into", "publicly weeping over", "silently judging", "attempting to romance", "inappropriately comparing", "suddenly adopting", "solemnly swearing allegiance to", "dramatically unveiling", "secretly taking pictures of", "overwhelming with kindness", "cynically commenting on", "bravely ignoring", "haphazardly repairing", "meticulously dusting", "unintentionally setting fire to", "enthusiastically destroying", "reluctantly accepting", "politely declining", "accidentally eating", "systematically dismantling", "quietly weeping near", "loudly complaining about", "strategically placing", "magically conjuring", "confusing with poetry", "calmly demanding", "brutally critiquing", "passionately defending", "aggressively cuddling", "desperately attempting to hide", "subtly undermining", "forcefully injecting into", "playfully swatting at", "relentlessly cheering for", "unintentionally insulting", "solemnly burying", "gleefully reanimating", "digitally enhancing", "emotionally supporting", "violently disagreeing with", "awkwardly complimenting", "cautiously approaching", "sarcastically praising", "firmly rejecting", "clumsily knocking over", "carefully balancing", "pointlessly measuring", "uncontrollably giggling at", "patiently waiting for", "dangerously licking", "morally compromising"];
             
-            const CONTEXTS = ["the entire USS Enterprise-D crew.", "a tiny, decorative teapot.", "the fourth dimension's tax laws.", "a 1980s aerobics instruction video.", "a highly secured box of paperclips.", "Shepard's collection of fish.", "the Citadel Council's worst fears.", "the Borg Queen's dating profile.", "a time-displaced traffic cone.", "a convention of angry Ewoks.", "a rogue Gonk Droid with existential dread.", "the Emperor's new clothes.", "the collected works of William Shatner.", "a deeply philosophical Roomba.", "a highly caffeinated T'ealc.", "the complete history of bad movie sequels.", "a rogue singularity in a coffee pot.", "a perfectly normal office plant.", "the Reapers' primary weakness: glitter.", "the secret recipe for Bantha Blue Milk.", "a Volus aggressively selling insurance.", "the concept of free will and responsibility.", "a stack of overdue library books.", "a highly unstable plasma rifle.", "a rogue asteroid that looks like a potato.", "the secret to eternal youth (it's napping).", "a surprisingly clean sock.", "a bucket of extremely confusing Legos.", "a convention of angry Ewoks.", "a highly suspicious garden gnome.", "the horrifying implications of a two-way mirror.", "a sentient puddle of water.", "the universal symbol for 'do not touch'.", "a tiny black hole disguised as a button.", "the concept of causality itself.", "a perpetually running clock.", "the collected thoughts of a space slug.", "a discarded pair of socks.", "a highly sensitive mood ring.", "a jar of artisanal pickles.", "the existential horror of infinite parallel universes.", "a pile of highly compressed nothing.", "the lost episode of Firefly.", "a single, perfect tear.", "the bureaucratic process for timeline repair.", "a highly decorative bath bomb.", "the terrifying sound of silence.", "a perpetually falling feather.", "the political campaign of a sentient nebula.", "a box of disappointment and regret.", "the last remaining drop of oil.", "a highly specialized toothbrush.", "the profound mystery of missing socks.", "a rogue hologram of Captain Kirk.", "the gravitational pull of destiny.", "a bucket of unanswerable questions.", "a single grain of sand.", "a highly sensitive time machine's antenna.", "the concept of 'maybe'.", "a surprisingly effective placebo.", "the rules for multi-level marketing in space.", "a stack of laminated 'I told you so' cards.", "a miniature golf course.", "the complete lyrics to Rick Astley's 'Never Gonna Give You Up'.", "a rogue asteroid that looks like a potato.", "the crushing weight of existence itself.", "a self-aware lint roller.", "the universal laws of bad parking.", "a dangerously wobbly chair.", "a container of purified sarcasm.", "the collective subconscious of all accountants.", "a deeply upsetting childhood memory.", "the exact point where art becomes trash.", "a highly aggressive rubber duck.", "the mysterious origin of the ellipsis.", "a tiny, holographic dinosaur.", "the existential threat of Mondays.", "a stack of rejected fan fiction.", "a bowl of cold, damp noodles.", "the principle of least effort.", "a highly contested piece of fruit.", "the philosophical debate over toast.", "a spontaneously generated black hole.", "a perpetually regenerating scratch card.", "the sound of one hand clapping, but louder.", "a tiny, majestic pony.", "the universal sign for 'I need coffee'.", "a misplaced sense of moral superiority.", "a can of highly explosive beans.", "the horrifying reality of reality television.", "a bucket of warm, flat soda.", "the true meaning of 'fartlek'.", "a surprisingly comfortable rock.", "the rules of the intergalactic thumb war championship.", "a highly illegal laser pointer."];
+            const CONTEXTS = ["the entire USS Enterprise-D crew.", "a tiny, decorative teapot.", "the fourth dimension's tax laws.", "a 1980s aerobics instruction video.", "a highly secured box of paperclips.", "Shepard's collection of fish.", "the Citadel Council's worst fears.", "the Borg Queen's dating profile.", "a time-displaced traffic cone.", "a convention of angry Ewoks.", "a rogue Gonk Droid with existential dread.", "the Emperor's new clothes.", "the collected works of William Shatner.", "a deeply philosophical Roomba.", "a highly caffeinated T'ealc.", "the complete history of bad movie sequels.", "a rogue singularity in a coffee pot.", "a perfectly normal office plant.", "the Reapers' primary weakness: glitter.", "the secret recipe for Bantha Blue Milk.", "a Volus aggressively selling insurance.", "the concept of free will and responsibility.", "a stack of overdue library books.", "a highly unstable plasma rifle.", "a rogue asteroid that looks like a potato.", "the secret to eternal youth (it's napping).", "a highly secured box of paperclips.", "a surprisingly clean sock.", "a bucket of extremely confusing Legos.", "a convention of angry Ewoks.", "a highly suspicious garden gnome.", "the horrifying implications of a two-way mirror.", "a sentient puddle of water.", "the universal symbol for 'do not touch'.", "a tiny black hole disguised as a button.", "the concept of causality itself.", "a perpetually running clock.", "the collected thoughts of a space slug.", "a discarded pair of socks.", "a highly sensitive mood ring.", "a jar of artisanal pickles.", "the existential horror of infinite parallel universes.", "a pile of highly compressed nothing.", "the lost episode of Firefly.", "a single, perfect tear.", "the bureaucratic process for timeline repair.", "a highly decorative bath bomb.", "the terrifying sound of silence.", "a perpetually falling feather.", "the political campaign of a sentient nebula.", "a box of disappointment and regret.", "the last remaining drop of oil.", "a highly specialized toothbrush.", "the profound mystery of missing socks.", "a rogue hologram of Captain Kirk.", "the gravitational pull of destiny.", "a bucket of unanswerable questions.", "a single grain of sand.", "a highly sensitive time machine's antenna.", "the concept of 'maybe'.", "a surprisingly effective placebo.", "the rules for multi-level marketing in space.", "a stack of laminated 'I told you so' cards.", "a miniature golf course.", "the complete lyrics to Rick Astley's 'Never Gonna Give Up'.", "a rogue asteroid that looks like a potato.", "the crushing weight of existence itself.", "a self-aware lint roller.", "the universal laws of bad parking.", "a dangerously wobbly chair.", "a container of purified sarcasm.", "the collective subconscious of all accountants.", "a deeply upsetting childhood memory.", "the exact point where art becomes trash.", "a highly aggressive rubber duck.", "the mysterious origin of the ellipsis.", "a tiny, holographic dinosaur.", "the existential threat of Mondays.", "a stack of rejected fan fiction.", "a bowl of cold, damp noodles.", "the principle of least effort.", "a highly contested piece of fruit.", "the philosophical debate over toast.", "a spontaneously generated black hole.", "a perpetually regenerating scratch card.", "the sound of one hand clapping, but louder.", "a tiny, majestic pony.", "the universal sign for 'I need coffee'.", "a misplaced sense of moral superiority.", "a can of highly explosive beans.", "the horrifying reality of reality television.", "a bucket of warm, flat soda.", "the true meaning of 'fartlek'.", "a surprisingly comfortable rock.", "the rules of the intergalactic thumb war championship.", "a highly illegal laser pointer."];
 
             const CAH_DATA = {
                 blackCards: [
@@ -296,7 +312,7 @@
                 humanStanding: 60,
                 humanHealth: 100,
                 humanStability: 100, 
-                maxStanding: 60, // Track max standing for the score summary
+                maxStanding: 60,
                 humanHand: [],
                 computerStanding: 60,
                 computerHealth: 100,
@@ -359,7 +375,6 @@
                 return DYNAMIC_COLORS.absurdityHigh;
             }
             
-            // Feature 4: Visual Feedback for Stat Changes
             function flashStat(elementId, delta) {
                 const el = document.getElementById(statusItems[elementId]);
                 if (!el) return;
@@ -370,7 +385,7 @@
 
                 setTimeout(() => {
                     el.classList.remove(className);
-                }, 1000); // 1 second duration
+                }, 1000); 
             }
 
 
@@ -382,7 +397,6 @@
 
                 const text = `${adjective} ${noun}, ${verb} ${context}.`;
                 
-                // Absurdity (1-5)
                 const absurdity = Math.floor(Math.random() * 5) + 1; 
                 const theme = getRandom(THEMES);
 
@@ -409,7 +423,7 @@
                 
                 gameState = { ...INITIAL_STATE, gameMode: currentMode }; 
                 gameState.currentChapter = 0; 
-                gameState.maxStanding = INITIAL_STATE.humanStanding; // Reset max standing
+                gameState.maxStanding = INITIAL_STATE.humanStanding; 
                 
                 submissionAreaEl.classList.add('hidden'); 
                 humanSubmissionEl.innerHTML = '';
@@ -623,7 +637,7 @@
                 }
                 
                 // Feature 3: Difficulty Scaling (Multiplier increases by 15% every 5 chapters)
-                const difficultyMultiplier = 1 + Math.floor(gameState.currentChapter / 5) * 0.15; 
+                const difficultyMultiplier = 1 + Math.floor((gameState.currentChapter -1) / 5) * 0.15; 
                 
                 const finalStandingDelta = Math.round((standingDelta + synergyBonus) * difficultyMultiplier);
                 const finalHealthDelta = Math.round(healthDelta * difficultyMultiplier);
@@ -732,7 +746,7 @@
                     gameState.humanStanding = capValue(gameState.humanStanding + humanStandingChange);
                     gameState.humanHealth = capValue(gameState.humanHealth + humanHealthChange);
                     gameState.humanStability = capValue(gameState.humanStability + humanStabilityChange);
-                    gameState.maxStanding = Math.max(gameState.maxStanding, gameState.humanStanding); // Track max standing
+                    gameState.maxStanding = Math.max(gameState.maxStanding, gameState.humanStanding); 
 
                     if (gameState.gameMode === 'vs-computer') {
                         gameState.computerStanding = capValue(gameState.computerStanding + compStandingChange);
@@ -759,8 +773,9 @@
                         return `<span class="text-red">**${card ? card.text : 'ERROR'}**</span>`;
                     });
                     
+                    const difficultyMultiplier = 1 + Math.floor((gameState.currentChapter -1) / 5) * 0.15;
                     let synergyMsg = winnerOutcome.synergyMatchCount > 0 
-                        ? `<span class="msg-synergy">(${winnerOutcome.synergyMatchCount}x Lore Synergy: +${winnerOutcome.synergyMatchCount * 5} Standing)</span>` 
+                        ? `<span class="msg-synergy">(${winnerOutcome.synergyMatchCount}x Lore Synergy: +${winnerOutcome.synergyMatchCount * 5 * difficultyMultiplier} Standing)</span>` 
                         : '';
 
                     let standingText, healthText, stabilityText, historyMessage;
@@ -773,7 +788,7 @@
                         historyMessage = 
                             `<p class="msg-info">The winning outcome, submitted by <strong>${winningSubmission.player}</strong>: ${completedText}</p>
                             <p>Avg. Absurdity: ${winnerOutcome.finalAbsurdity.toFixed(1)}/5. ${synergyMsg} Multiverse Impact: ${winnerOutcome.loreViolation}</p>
-                            <p>${standingText} | ${healthText} | ${stabilityText} | Multiplier: x${(1 + Math.floor((gameState.currentChapter -1) / 5) * 0.15).toFixed(2)}</p>
+                            <p>${standingText} | ${healthText} | ${stabilityText} | Multiplier: x${difficultyMultiplier.toFixed(2)}</p>
                             <p class="${winnerOutcome.resultClass}">${winnerOutcome.resultMessage}</p>`;
                     } else { // Solo Mode History Message
                         standingText = `Standing: ${humanStandingChange > 0 ? '+' : ''}${humanStandingChange}`;
@@ -783,7 +798,7 @@
                         historyMessage = 
                             `<p class="msg-info">The resulting scenario: ${completedText}</p>
                             <p>Avg. Absurdity: ${winnerOutcome.finalAbsurdity.toFixed(1)}/5. ${synergyMsg} Multiverse Impact: ${winnerOutcome.loreViolation}</p>
-                            <p>${standingText} | ${healthText} | ${stabilityText} | Multiplier: x${(1 + Math.floor((gameState.currentChapter -1) / 5) * 0.15).toFixed(2)}</p>
+                            <p>${standingText} | ${healthText} | ${stabilityText} | Multiplier: x${difficultyMultiplier.toFixed(2)}</p>
                             <p class="${winnerOutcome.resultClass}">${winnerOutcome.resultMessage}</p>`;
                     }
 
@@ -866,7 +881,6 @@
                 return false;
             }
 
-            // Feature 2: End-Game Score Summary
             function endGame(message, isWin) {
                 gameState.isGameOver = true;
                 handAreaEl.innerHTML = '';
@@ -986,17 +1000,16 @@
                     let text = gameState.blackCard.text.replace(/\[BLANK\]/g, '<span class="text-red">BLANK</span>');
                     
                     const required = gameState.blackCard.blanks || 1;
-                    const info = `<div class="required-cards-info">Theme: ${gameState.blackCard.theme || 'CANON'} | Requires: ${required} card${required > 1 ? 's' : ''}</div>`;
+                    const info = `<div class="required-cards-info pt-2 border-t border-gray-700 mt-2 text-sm text-gray-400">Theme: ${gameState.blackCard.theme || 'CANON'} | Requires: ${required} card${required > 1 ? 's' : ''}</div>`;
                     
                     playCardBtn.textContent = `Play Chosen Card${required > 1 ? 's' : ''}`; 
 
-                    blackCardTextEl.innerHTML = `<div class="text-center font-bold text-lg">${text}</div> ${info}`;
+                    blackCardTextEl.innerHTML = `<div class="text-center font-bold text-xl">${text}</div> ${info}`;
                 } else {
                     blackCardTextEl.textContent = "Select a mode and start the campaign.";
                 }
             }
 
-            // Feature 1: Absurdity Indicator in hand
             function renderStrategyHand() {
                 if (submissionAreaEl.classList.contains('hidden') && !isTurnProcessing) { 
                     handAreaEl.innerHTML = '';
@@ -1042,13 +1055,15 @@
             function setModeUI(mode) {
                 if (gameState.currentChapter > 0 && !gameState.isGameOver) return; 
 
-                modeSoloBtn.classList.remove('selected-mode');
-                modeVsComputerBtn.classList.remove('selected-mode');
+                modeSoloBtn.classList.remove('selected-mode', 'bg-violet-600', 'bg-gray-700');
+                modeVsComputerBtn.classList.remove('selected-mode', 'bg-violet-600', 'bg-gray-700');
                 
                 if (mode === 'solo') {
-                    modeSoloBtn.classList.add('selected-mode');
+                    modeSoloBtn.classList.add('selected-mode', 'bg-violet-600');
+                    modeVsComputerBtn.classList.add('bg-gray-700');
                 } else {
-                    modeVsComputerBtn.classList.add('selected-mode');
+                    modeVsComputerBtn.classList.add('selected-mode', 'bg-violet-600');
+                    modeSoloBtn.classList.add('bg-gray-700');
                 }
 
                 initializeGame(); 
@@ -1064,6 +1079,7 @@
                 
                 playCardBtn.addEventListener('click', playTurn);
 
+                setModeUI('solo'); // Initialize default mode
                 initializeGame();
             });
         })();

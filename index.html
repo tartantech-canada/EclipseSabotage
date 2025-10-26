@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juno Eclipse: The Infinite Nexus Sabotage</title>
+    <title>Juno Eclipse: The Infinite Nexus Sabotage (Sabacc Edition)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* --- Animated Space Background --- */
@@ -20,6 +20,7 @@
             --color-warning: #fcd34d;
             --color-error: #ef4444; /* Red */
             --color-temporal: #f472b6; /* Pink for Stability */
+            --color-sabacc: #facc15; /* Amber/Gold for Sabacc */
         }
         
         body {
@@ -50,19 +51,17 @@
             animation: twinkle linear infinite;
         }
 
-        /* Function to generate random star properties for a nice spread */
         @keyframes twinkle {
             0% { opacity: 0.1; transform: scale(0.5); }
             50% { opacity: 0.8; transform: scale(1); }
             100% { opacity: 0.1; transform: scale(0.5); }
         }
 
-        /* Generate 100 stars with unique properties via JS (see below) or simplified with generic classes */
         .star-small { width: 1px; height: 1px; animation-duration: 2s; animation-delay: 0s; }
         .star-medium { width: 2px; height: 2px; animation-duration: 3s; animation-delay: 1s; }
         .star-large { width: 3px; height: 3px; animation-duration: 4s; animation-delay: 2s; }
 
-        /* --- Custom CSS for The Juno Eclipse Game (Re-included for self-contained functionality) --- */
+        /* --- Custom CSS for The Juno Eclipse Game --- */
         #game-outer-wrapper {
             width: 100%;
             padding: 20px 0;
@@ -91,45 +90,119 @@
             text-shadow: 0 0 10px rgba(139, 92, 246, 0.8);
         }
 
-        .status-item {
-            padding: 2px 0;
-            transition: background-color 0.1s;
-        }
-        @keyframes flash-green {
-            0%, 100% { background-color: transparent; }
-            50% { background-color: rgba(52, 211, 153, 0.4); }
-        }
-        @keyframes flash-red {
-            0%, 100% { background-color: transparent; }
-            50% { background-color: rgba(239, 68, 68, 0.4); }
-        }
+        .status-item { padding: 2px 0; transition: background-color 0.1s; }
+        @keyframes flash-green { 0%, 100% { background-color: transparent; } 50% { background-color: rgba(52, 211, 153, 0.4); } }
+        @keyframes flash-red { 0%, 100% { background-color: transparent; } 50% { background-color: rgba(239, 68, 68, 0.4); } }
         .status-item.flashing-green { animation: flash-green 0.5s ease-out 2; }
         .status-item.flashing-red { animation: flash-red 0.5s ease-out 2; }
         .status-block { background-color: #374151; padding: 12px; border-radius: 8px; box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3); border: 1px solid #4b5563; }
+        
+        /* Black Card (Scenario) */
         .black-card { background-color: var(--color-secondary); color: var(--color-text); padding: 20px; border-radius: 8px; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6); }
-        .white-card { background-color: var(--color-card-bg); color: var(--color-secondary); padding: 12px; border-radius: 8px; border: 1px solid var(--color-card-border); flex: 1 1 calc(33.333% - 10px); min-width: 150px; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; justify-content: space-between; font-size: 0.9rem; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); user-select: none; }
+        .black-card .text-red { color: var(--color-error); font-style: italic; }
+
+        /* White Card (Response) - Now a <button> */
+        .white-card { 
+            background-color: var(--color-card-bg); 
+            color: var(--color-secondary); 
+            padding: 12px; 
+            border-radius: 8px; 
+            border: 1px solid var(--color-card-border); 
+            flex: 1 1 calc(33.333% - 10px); 
+            min-width: 150px; 
+            width: 100%; /* Ensure button fills flex basis */
+            cursor: pointer; 
+            transition: all 0.2s; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            font-size: 0.9rem; 
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+            user-select: none; 
+            text-align: left; /* Override button default center align */
+        }
         .absurdity-rating { font-weight: bold; font-size: 0.75rem; padding: 2px 0; }
         .white-card.selected { border: 3px solid var(--color-primary); background-color: #e0f2fe; box-shadow: 0 0 15px var(--color-primary); }
-        .card-theme-tag { font-size: 0.7rem; color: #6b7280; text-align: right; margin-top: 8px; border-top: 1px dashed #e5e7eb; padding-top: 5px; }
+        .white-card:focus-visible { /* Accessibility outline */
+            outline: 3px solid var(--color-primary);
+            outline-offset: 2px;
+            box-shadow: 0 0 15px var(--color-primary);
+        }
+        
+        .card-theme-tag { 
+            font-size: 0.7rem; 
+            color: #4b5563; /* Improved contrast */
+            text-align: right; 
+            margin-top: 8px; 
+            border-top: 1px dashed #e5e7eb; 
+            padding-top: 5px; 
+        }
+        
+        /* Story History */
         #story-history { max-height: 200px; overflow-y: auto; padding: 10px; border: 1px solid #4b5563; border-radius: 8px; background-color: #2c3545; }
         #story-history::-webkit-scrollbar { width: 8px; }
         #story-history::-webkit-scrollbar-thumb { background: #525252; border-radius: 10px; }
         #story-history::-webkit-scrollbar-track { background: #1f2937; }
-        .history-result { padding: 5px; border-left: 4px solid var(--color-primary); background-color: #374151; }
-        .msg-info { color: #9ca3af; font-style: italic; }
+        .history-result { padding: 5px; border-left: 4px solid var(--color-primary); background-color: #374151; margin-bottom: 5px; }
+        .msg-info { color: #d1d5db; font-style: italic; } /* Improved contrast */
         .msg-success { color: var(--color-success); font-weight: bold; }
         .msg-warning { color: var(--color-warning); font-weight: bold; }
         .msg-error { color: var(--color-error); font-weight: bold; }
         .msg-synergy { color: #5eead4; }
 
+        /* Sabacc Modal/Cards */
+        #sabacc-game-container { font-family: 'Orbitron', sans-serif; }
+        /* Mobile-first Sabacc cards */
+        .sabacc-card { 
+            background-color: var(--color-sabacc); 
+            color: var(--color-secondary); 
+            width: 64px; height: 96px; /* Smaller size for mobile */
+            border-radius: 8px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-size: 1.5rem; /* Smaller font */
+            font-weight: 900;
+            border: 3px solid #b45309; /* Thinner border */
+            box-shadow: 0 0 10px rgba(250, 204, 21, 0.6);
+            transition: transform 0.2s;
+            cursor: pointer;
+            position: relative; /* For text positioning */
+        }
+        .sabacc-card .text-xs {
+            font-size: 0.65rem;
+        }
+
+        /* Scale up Sabacc cards on larger screens */
+        @media (min-width: 640px) {
+            .sabacc-card {
+                width: 80px; height: 120px; 
+                font-size: 2rem;
+                border-width: 4px;
+                box-shadow: 0 0 15px rgba(250, 204, 21, 0.7);
+            }
+            .sabacc-card .text-xs {
+                font-size: 0.75rem;
+            }
+        }
+        .sabacc-card-back { background-color: #4c1d95; color: white; font-size: 1.5rem; }
+        .sabacc-card.shifted { border-color: var(--color-error); color: var(--color-error); }
+        #sabacc-score { color: var(--color-sabacc); text-shadow: 0 0 8px rgba(250, 204, 21, 0.8); }
+        #sabacc-challenge-btn:disabled { background-color: #4b5563; cursor: not-allowed; }
+
         @media (max-width: 600px) {
             .white-card { flex: 1 1 calc(50% - 10px); }
+        }
+        /* Stack cards on very small screens */
+        @media (max-width: 420px) {
+            .white-card { 
+                flex: 1 1 100%; 
+            }
         }
     </style>
 </head>
 <body>
     
-    <!-- Animated Starfield Background -->
     <div class="starfield" id="starfield"></div>
 
     <div id="game-outer-wrapper">
@@ -137,77 +210,68 @@
             
             <header class="text-center pb-8 border-b border-violet-700 mb-6">
                 <h1 class="text-3xl md:text-5xl">JUNO ECLIPSE</h1>
-                <p class="text-xl md:text-2xl text-violet-400 font-bold">The Infinite Nexus Sabotage</p>
+                <p class="text-xl md:text-2xl text-violet-400 font-bold">The Infinite Nexus Sabotage (Sabacc Edition)</p>
             </header>
             
-            <!-- Game Description and Instructions -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
                 
                 <div class="md:col-span-2 space-y-4">
                     <h2 class="text-2xl font-bold text-violet-300">The Mission Briefing</h2>
-                    <p class="text-gray-300">You are **Juno Eclipse**, the galaxy's most chaotic and effective temporal infiltrator. The **Nexus AI** is attempting to stabilize the multiverse by enforcing canon and logic. Your job is simple: **Inject enough high-tier absurdity into pivotal spacetime events to fracture its control, all while maintaining a credible front.**</p>
-                    <p class="text-gray-300">This is a high-stakes, **choose-your-own-chaos** card game. Choose the right level of absurdity and theme to maximize your **Rebel Standing** without destroying your ship (**Hull Integrity**) or dissolving reality (**Temporal Stability**).</p>
+                    <p class="text-gray-300">You are **Juno Eclipse**, the galaxy's most chaotic and effective temporal infiltrator. The **Nexus AI** is attempting to stabilize the multiverse. Your job: **Inject enough high-tier absurdity** to fracture its control.</p>
+                    <p class="text-gray-300 font-bold text-violet-300">***NEW: The Sabacc Challenge***</p>
+                    <p class="text-gray-300">Before playing your main card, you can attempt the **Sabacc Challenge**. Get a hand as close to **23 or -23** as possible. A successful Sabacc hand grants a huge **Absurdity Multiplier** for the turn. A failure (a **Bomb**, over 30 or under -30) results in immediate penalties! The deck is volatile—cards can shift!</p>
                     
                     <h2 class="text-2xl font-bold text-violet-300 pt-4">Instructions:</h2>
                     <ul class="list-disc list-inside text-gray-300 space-y-2 pl-4">
-                        <li>**Objective:** Survive as many chapters as possible, achieving the highest **Rebel Standing** score.</li>
-                        <li>**The Crisis (Black Card):** A new scenario appears, usually tied to a specific **Theme** (SW, ST, ME, etc.).</li>
-                        <li>**The Response (White Cards):** Select one or more cards from your hand to complete the Black Card text.</li>
-                        <li>**Strategy (Absurdity):** Each White Card has a hidden **Absurdity Score (1-5)**, now displayed on the card.
-                            <ul class="list-disc list-inside ml-6 text-sm text-gray-400">
-                                <li>**Low Absurdity (1-2):** Safe, but often too 'canon,' leading to failure and damage.</li>
-                                <li>**High Absurdity (4-5):** High risk, but if successful, huge **Standing** gains. High risk of catastrophic failure.</li>
-                            </ul>
-                        </li>
-                        <li>**Synergy:** Matching your card's theme to the Black Card's theme grants a **Standing Bonus**.</li>
+                        <li>**Objective:** Survive as many chapters as possible, achieving the highest **Rebel Standing**.</li>
+                        <li>**Sabacc Phase:** Optional pre-turn risk. Win a multiplier, or lose health.</li>
+                        <li>**Main Phase:** Select the right White Card(s) to maximize your **Absurdity** and score.</li>
+                        <li>**Synergy:** Match your card's theme to the Black Card's theme for a **Standing Bonus**.</li>
                         <li>**Game Over:** You lose if your **Hull Integrity** or **Temporal Stability** hits 0%, or if **Rebel Standing** falls below 10.</li>
                     </ul>
                 </div>
 
                 <div class="md:col-span-1 flex justify-center items-start pt-4">
                     <figure class="flex flex-col items-center">
-                        <!-- Caption (Text) placed first, as requested -->
                         <figcaption class="text-center text-sm italic mb-4 text-violet-400">Juno Eclipse prepares a new temporal sabotage</figcaption>
-                        <!-- Image placed below the caption -->
-                        
+                        <div class="h-40 w-40 bg-violet-900 rounded-full flex items-center justify-center border-4 border-violet-500 shadow-xl" role="img" aria-label="Stylized icon of a clock inside a circle">
+                            <svg class="w-24 h-24 text-violet-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
                     </figure>
                 </div>
             </div>
             
             <hr class="border-violet-700 my-6">
 
-            <!-- --- GAME START --- -->
-            
             <div class="text-center mb-4 flex justify-center space-x-4">
                 <button id="mode-solo" class="selected-mode bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded-full transition-all duration-200">Solo Mode</button>
                 <button id="mode-vs-computer" class="bg-gray-700 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded-full transition-all duration-200">Vs. Computer Mode</button>
             </div>
 
-            <!-- Status Bar -->
-            <div id="status-bar" class="flex flex-col md:flex-row justify-between gap-3 mb-6">
+            <div id="status-bar" role="region" aria-label="Game Status" class="flex flex-col md:flex-row justify-between gap-3 mb-6">
                 <div class="status-block flex-1">
                     <h3 class="font-bold text-lg text-violet-300">Juno Eclipse (You)</h3>
                     <div class="status-item text-sm" id="chapter-item">Chapter: <span id="chapter-count" class="font-mono text-lg text-yellow-300">0</span></div>
                     <div class="status-item text-sm" id="health-item">Hull Integrity: <span id="human-health-stat" class="font-mono text-lg">100%</span></div>
                     <div class="status-item text-sm" id="standing-item">Rebel Standing: <span id="human-standing-stat" class="font-mono text-lg">60</span></div>
                     <div class="status-item text-sm" id="stability-item">Stability: <span id="human-stability-stat" class="font-mono text-lg">100%</span></div>
+                    <div class="status-item text-sm text-yellow-500 font-bold" id="sabacc-multiplier-item">Absurdity Multiplier: <span id="sabacc-multiplier" class="font-mono text-lg">x1.00</span></div>
                 </div>
                 <div class="status-block hidden flex-1" id="computer-stats">
                     <h3 class="font-bold text-lg text-red-400">The Nexus AI (Opponent)</h3>
                     <div class="status-item text-sm" id="comp-health-item">Hull Integrity: <span id="computer-health-stat" class="font-mono text-lg">100%</span></div>
                     <div class="status-item text-sm" id="comp-standing-item">Control Standing: <span id="computer-standing-stat" class="font-mono text-lg">60</span></div>
                     <div class="status-item text-sm" id="comp-stability-item">Stability: <span id="computer-stability-stat" class="font-mono text-lg">100%</span></div>
+                    <div class="status-item text-sm text-gray-500 font-bold" id="comp-sabacc-multiplier-item">AI Multiplier: <span id="computer-multiplier" class="font-mono text-lg">x1.00</span></div>
                 </div>
             </div>
             
-            <!-- Story History -->
-            <div id="story-history" class="mb-6 text-sm">
+            <div id="story-history" role="log" aria-live="polite" class="mb-6 text-sm">
                 <p class="history-text-center msg-info">Initializing temporal relay...</p>
             </div>
 
-            <!-- Card Area -->
-            <div id="card-area">
-                <div id="black-card-display" class="black-card mb-4">
+            <div id="card-area" role="region" aria-label="Main Game Area">
+                <div id="black-card-display" class="black-card mb-4" aria-live="polite">
                     <span id="black-card-text" class="text-center font-bold text-lg">Select a mode and start the campaign.</span>
                 </div>
                 
@@ -217,17 +281,23 @@
                     <h2 class="hand-title text-yellow-300 mt-4 mb-2 font-bold hidden" id="losing-submission-title">Losing Submission: <span id="losing-player"></span></h2>
                     <div id="computer-submission" class="flex flex-wrap gap-2"></div>
                 </div>
+                
+                <div class="flex flex-col sm:flex-row gap-4 mb-4">
+                    <button id="sabacc-challenge-btn" class="bg-yellow-600 hover:bg-yellow-700 text-black w-full sm:w-1/3 py-3 rounded-lg shadow-xl font-extrabold transition-all duration-200" disabled>
+                        Attempt Sabacc Challenge
+                    </button>
+                    <button id="play-card-btn" class="play-button bg-violet-600 hover:bg-violet-700 text-white w-full sm:w-2/3 py-3 rounded-lg shadow-xl font-extrabold transition-all duration-200" disabled>
+                        Play Chosen Card(s)
+                    </button>
+                </div>
+
 
                 <h2 id="hand-title" class="hand-title text-violet-400 font-bold text-xl mb-3">Your Hand (<span id="hand-count">0</span> Cards)</h2>
-                <div id="hand-area" class="flex flex-wrap justify-center gap-3 mb-4"></div>
+                <div id="hand-area" aria-labelledby="hand-title" class="flex flex-wrap justify-center gap-3 mb-4"></div>
                 
-                <button id="play-card-btn" class="play-button bg-violet-600 hover:bg-violet-700 text-white w-full py-3 mb-4 rounded-lg shadow-xl font-extrabold transition-all duration-200" disabled>
-                    Play Chosen Card(s)
-                </button>
             </div>
             
-            <!-- Action Buttons -->
-            <div class="action-buttons flex justify-between gap-3 mt-6">
+            <div class="action-buttons flex flex-col sm:flex-row justify-between gap-3 mt-6">
                 <button id="start-game-btn" class="choice-button bg-green-600 hover:bg-green-700 text-white flex-1 py-3 rounded-lg shadow-md font-bold transition-all duration-200">
                     Start New Campaign
                 </button>
@@ -236,12 +306,34 @@
                 </button>
             </div>
 
-            <!-- --- END GAME --- -->
+            </div>
+    </div>
+    
+    <div id="sabacc-overlay" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden flex items-center justify-center p-4"
+         role="dialog" aria-modal="true" aria-labelledby="sabacc-dialog-title">
+        <div id="sabacc-game-container" tabindex="-1" class="bg-gray-800 p-6 rounded-xl shadow-2xl w-11/12 sm:w-full max-w-md border-4 border-yellow-500">
+            <h2 id="sabacc-dialog-title" class="text-3xl text-center mb-4 text-yellow-400 font-bold">Sabacc Challenge</h2>
             
+            <div class="text-center mb-4 p-3 rounded bg-gray-700">
+                <p class="text-sm text-gray-300">Target: **23** or **-23** | Bomb: Over 30 or Under -30</p>
+                <p class="text-xl font-bold mt-2">Current Score: <span id="sabacc-score" class="text-4xl">0</span></p>
+            </div>
+
+            <div id="sabacc-hand-area" class="flex flex-wrap justify-center gap-2 mb-6 min-h-[96px]">
+                </div>
+
+            <div id="sabacc-message" class="text-center text-lg text-red-400 font-bold mb-4 min-h-[30px]"></div>
+
+            <div id="sabacc-buttons" class="flex gap-3 justify-center">
+                <button id="sabacc-draw-btn" class="bg-green-600 hover:bg-green-700 text-white flex-1 py-3 rounded-lg font-bold">Draw Card</button>
+                <button id="sabacc-stay-btn" class="bg-blue-600 hover:bg-blue-700 text-white flex-1 py-3 rounded-lg font-bold">Stay</button>
+                <button id="sabacc-call-btn" class="bg-red-600 hover:bg-red-700 text-white flex-1 py-3 rounded-lg font-bold">Call Sabacc</button>
+            </div>
+            <p id="sabacc-info" class="text-xs text-gray-400 text-center mt-4 hidden">Call Sabacc is only available if your score is 23 or -23.</p>
+            <p id="sabacc-exit-msg" class="text-lg text-center mt-4 font-bold text-green-400 hidden">Challenge complete. Returning to main turn...</p>
         </div>
     </div>
     
-    <!-- JavaScript Logic (Includes Game Logic and Starfield Initialization) -->
     <script>
         (function() {
             
@@ -274,13 +366,13 @@
             const THEMES = ['SW', 'ST', 'ME', 'SG', 'WHO', 'FIREFLY', 'ALIEN', 'SC', 'LOVECRAFT', 'RANDOM', 'CANON'];
             
             // --- Combinatorial Card Generation Arrays (Trillions in potential combinations) ---
-            const ADJECTIVES = ["A tiny", "A weeping", "A sentient", "The final", "An anti-gravity", "A laser-guided", "A holographic", "A malfunctioning", "A highly concentrated", "The crushing", "A rogue", "A porcelain", "An emotionally supportive", "A Volus-sized", "A Krill-based", "An easily confused", "A sentient", "A radioactive", "A perfectly formed", "The terrifying", "A glitter-covered", "A fully functional", "A perpetually bored", "A secretly ambitious", "A suspiciously damp", "An awkward", "The unspeakable", "A sentient", "A rogue", "A single, misplaced", "The horrifying truth of", "A morally ambiguous", "A deeply unsettling", "A hyper-intelligent", "A surprisingly rude", "An entire crate of", "A tiny pair of", "A caffeinated", "A heavily encrypted", "The existential dread of", "An overly dramatic", "A mysteriously damp", "A freshly laundered", "A genetically modified", "An inexplicable, powerful", "A time-displaced", "A morally bankrupt", "A dangerously flammable", "A subtly racist", "An adorable, yet deadly", "A technologically stunted", "A dangerously unstable", "A musically gifted", "A perpetually confused", "A shockingly clean", "A surprisingly sticky", "An ancient, forgotten", "A recently upgraded", "A deeply philosophical", "A suspiciously crunchy", "A non-Euclidean", "The unsettling scent of", "A perpetually surprised", "A slightly melted", "A meticulously calibrated", "A poorly translated", "A vaguely cylindrical", "A politically motivated", "A spontaneously generated", "An emotionally crippled", "A heavily insured", "A digitally preserved", "A physically incapable", "A deceptively simple", "A violently purple", "An economically unsound", "A technologically advanced", "A remarkably bland", "A psychologically damaging", "A cosmically indifferent", "An absurdly expensive", "A criminally underrated", "A universally despised", "A subtly humming", "A surprisingly comfortable", "A geometrically impossible", "A socially inept", "A highly suspicious", "A strangely familiar", "A deceptively bouncy", "An unnecessarily large", "A perpetually glistening", "A disturbingly quiet", "A brightly colored", "An unexpectedly potent", "A strategically placed", "A rhythmically pulsing", "A theoretically sound", "A tragically misplaced"];
+            const ADJECTIVES = ["A tiny", "A weeping", "A sentient", "The final", "An anti-gravity", "A laser-guided", "A holographic", "A malfunctioning", "A highly concentrated", "The crushing", "A rogue", "A porcelain", "An emotionally supportive", "A Volus-sized", "A Krill-based", "An easily confused", "A sentient", "A radioactive", "A perfectly formed", "The terrifying", "A glitter-covered", "A fully functional", "A perpetually bored", "A secretly ambitious", "A suspiciously damp", "An awkward", "The unspeakable", "A sentient", "A rogue", "A single, misplaced", "The horrifying truth of", "A morally ambiguous", "A deeply unsettling", "A hyper-intelligent", "A surprisingly rude", "An entire crate of", "A tiny pair of", "A caffeinated", "A heavily encrypted", "The existential dread of", "An overly dramatic", "A mysteriously damp", "A freshly laundered", "A genetically modified", "An inexplicable, powerful", "A time-displaced", "A morally bankrupt", "A dangerously flammable", "A subtly racist", "An adorable, yet deadly", "A technologically stunted", "A dangerously unstable", "A musically gifted", "A perpetually confused", "A shockingly clean", "A surprisingly sticky", "An ancient, forgotten", "A recently upgraded", "A deeply philosophical", "A suspiciously crunchy", "A non-Euclidean", "The unsettling scent of", "A perpetually surprised", "A slightly melted", "A meticulously calibrated", "A poorly translated", "A vaguely cylindrical", "A politically motivated", "A spontaneously generated", "An emotionally crippled", "A heavily insured", "A digitally preserved", "A physically incapable", "A violently purple", "An economically unsound", "A technologically advanced", "A remarkably bland", "A psychologically damaging", "A cosmically indifferent", "An absurdly expensive", "A criminally underrated", "A universally despised", "A subtly humming", "A surprisingly comfortable", "A geometrically impossible", "A socially inept", "A highly suspicious", "A strangely familiar", "A deceptively bouncy", "An unnecessarily large", "A perpetually glistening", "A disturbingly quiet", "A brightly colored", "An unexpectedly potent", "A strategically placed", "A rhythmically pulsing", "A theoretically sound", "A tragically misplaced"];
             
             const NOUNS = ["Sarlacc Pit", "Tribble", "Gonky Droid", "Jar Jar Binks' sock", "Transporter Chief's coffee cup", "Klingon opera score", "Vorlon Ambassador's wig", "Sonic Screwdriver", "TARDIS key", "Reaper heart", "Volus credit chip", "Mandalorian helmet", "Xenomorph plushie", "Zerg larva", "Stargate power conduit", "Goa'uld snakehead", "Shiny piece of aluminum foil", "Wookiee hairball", "Borg drone's favorite snack", "Jaffa warrior's tear", "Reaver corpse", "Elder Sign", "Mister Potato Head", "Crate of redundant red shirts", "Garrus's calibration schedule", "Sentient pair of pants", "Sentient knitted hat", "Last remaining slice of pizza", "Giant foam finger", "Rubber chicken with a pulley in the middle", "Holodeck safety protocol", "Primary buffer panel", "Deck scrubber", "Fez", "Bow tie", "Bad Wolf graffiti", "Bacta tank drainage plug", "Thermal detonator", "Unidentified green goo", "A stack of ancient data rods", "A particularly noisy modem", "A rogue AI's mood ring", "A microscopic black hole", "A highly aggressive chihuahua", "A three-legged space badger", "A container of emergency glitter", "A universal remote control", "A malfunctioning replicator", "A broken pocket watch", "A very confused Tribble", "A single, powerful sneeze", "A misplaced infinity stone", "A pair of reading glasses", "A worn out VHS tape", "A bucket of spare parts", "A forgotten sandwich", "A deeply philosophical Roomba", "A sentient sock puppet", "A genetically engineered squirrel", "A perfectly ripe banana", "A small, quiet kitten", "A massive ball of twine", "A holographic llama", "A tiny spaceship blueprint", "A cosmic rubber duck", "A mysterious crystal skull", "A jar of pickled onions", "A perfectly circular pebble", "A digital ghost", "A highly polished spoon", "A velvet painting of Elvis", "A map to nowhere", "A rusty can opener", "A singing fish toy", "A portable black hole generator", "A pair of mismatched gloves", "A jar of space jam", "A self-aware rubber band", "A miniature Death Star replica", "A very loud harmonica", "A mysterious box of donuts", "A forgotten lucky charm", "A handful of cosmic dust", "A self-sealing body bag", "A slightly toxic cupcake", "A perpetually spinning top", "A tiny, aggressive ferret", "A highly durable napkin", "A suspiciously clean spork", "A digitally enhanced echo", "A time-traveling goldfish", "A ceremonial battle-spatula", "A perpetually echoing whisper", "A discarded piece of popcorn", "A perfectly normal rock"];
 
             const VERBS = ["debating", "flossing", "calibrating", "singing", "disassembling", "negotiating", "interrogating", "replicating", "erasing", "wrestling", "romancing", "attempting to fix", "explaining the plot of", "baking a cake shaped like", "performing interpretive dance for", "wearing a tiny hat while", "shouting obscenities at", "rearranging the contents of", "sincerely apologizing to", "demanding a refund for", "ignoring the advice of", "threatening with a lecture on", "writing a passive-aggressive note about", "secretly admiring", "trying to parallel park with", "getting surprisingly emotional about", "blaming the entire crisis on", "teaching basic calculus to", "forcing everyone to listen to", "engaging in a rap battle with", "performing surgery on", "hiding inside", "arguing with", "carefully cataloging", "enthusiastically greeting", "sincerely regretting", "unnecessarily explaining", "aggressively staring at", "gently caressing", "confidently mispronouncing", "frantically searching for", "relentlessly mocking", "inadvertently activating", "professionally reviewing", "violently shaking", "mysteriously transforming into", "publicly weeping over", "silently judging", "attempting to romance", "inappropriately comparing", "suddenly adopting", "solemnly swearing allegiance to", "dramatically unveiling", "secretly taking pictures of", "overwhelming with kindness", "cynically commenting on", "bravely ignoring", "haphazardly repairing", "meticulously dusting", "unintentionally setting fire to", "enthusiastically destroying", "reluctantly accepting", "politely declining", "accidentally eating", "systematically dismantling", "quietly weeping near", "loudly complaining about", "strategically placing", "magically conjuring", "confusing with poetry", "calmly demanding", "brutally critiquing", "passionately defending", "aggressively cuddling", "desperately attempting to hide", "subtly undermining", "forcefully injecting into", "playfully swatting at", "relentlessly cheering for", "unintentionally insulting", "solemnly burying", "gleefully reanimating", "digitally enhancing", "emotionally supporting", "violently disagreeing with", "awkwardly complimenting", "cautiously approaching", "sarcastically praising", "firmly rejecting", "clumsily knocking over", "carefully balancing", "pointlessly measuring", "uncontrollably giggling at", "patiently waiting for", "dangerously licking", "morally compromising"];
             
-            const CONTEXTS = ["the entire USS Enterprise-D crew.", "a tiny, decorative teapot.", "the fourth dimension's tax laws.", "a 1980s aerobics instruction video.", "a highly secured box of paperclips.", "Shepard's collection of fish.", "the Citadel Council's worst fears.", "the Borg Queen's dating profile.", "a time-displaced traffic cone.", "a convention of angry Ewoks.", "a rogue Gonk Droid with existential dread.", "the Emperor's new clothes.", "the collected works of William Shatner.", "a deeply philosophical Roomba.", "a highly caffeinated T'ealc.", "the complete history of bad movie sequels.", "a rogue singularity in a coffee pot.", "a perfectly normal office plant.", "the Reapers' primary weakness: glitter.", "the secret recipe for Bantha Blue Milk.", "a Volus aggressively selling insurance.", "the concept of free will and responsibility.", "a stack of overdue library books.", "a highly unstable plasma rifle.", "a rogue asteroid that looks like a potato.", "the secret to eternal youth (it's napping).", "a highly secured box of paperclips.", "a surprisingly clean sock.", "a bucket of extremely confusing Legos.", "a convention of angry Ewoks.", "a highly suspicious garden gnome.", "the horrifying implications of a two-way mirror.", "a sentient puddle of water.", "the universal symbol for 'do not touch'.", "a tiny black hole disguised as a button.", "the concept of causality itself.", "a perpetually running clock.", "the collected thoughts of a space slug.", "a discarded pair of socks.", "a highly sensitive mood ring.", "a jar of artisanal pickles.", "the existential horror of infinite parallel universes.", "a pile of highly compressed nothing.", "the lost episode of Firefly.", "a single, perfect tear.", "the bureaucratic process for timeline repair.", "a highly decorative bath bomb.", "the terrifying sound of silence.", "a perpetually falling feather.", "the political campaign of a sentient nebula.", "a box of disappointment and regret.", "the last remaining drop of oil.", "a highly specialized toothbrush.", "the profound mystery of missing socks.", "a rogue hologram of Captain Kirk.", "the gravitational pull of destiny.", "a bucket of unanswerable questions.", "a single grain of sand.", "a highly sensitive time machine's antenna.", "the concept of 'maybe'.", "a surprisingly effective placebo.", "the rules for multi-level marketing in space.", "a stack of laminated 'I told you so' cards.", "a miniature golf course.", "the complete lyrics to Rick Astley's 'Never Gonna Give Up'.", "a rogue asteroid that looks like a potato.", "the crushing weight of existence itself.", "a self-aware lint roller.", "the universal laws of bad parking.", "a dangerously wobbly chair.", "a container of purified sarcasm.", "the collective subconscious of all accountants.", "a deeply upsetting childhood memory.", "the exact point where art becomes trash.", "a highly aggressive rubber duck.", "the mysterious origin of the ellipsis.", "a tiny, holographic dinosaur.", "the existential threat of Mondays.", "a stack of rejected fan fiction.", "a bowl of cold, damp noodles.", "the principle of least effort.", "a highly contested piece of fruit.", "the philosophical debate over toast.", "a spontaneously generated black hole.", "a perpetually regenerating scratch card.", "the sound of one hand clapping, but louder.", "a tiny, majestic pony.", "the universal sign for 'I need coffee'.", "a misplaced sense of moral superiority.", "a can of highly explosive beans.", "the horrifying reality of reality television.", "a bucket of warm, flat soda.", "the true meaning of 'fartlek'.", "a surprisingly comfortable rock.", "the rules of the intergalactic thumb war championship.", "a highly illegal laser pointer."];
+            const CONTEXTS = ["the entire USS Enterprise-D crew.", "a tiny, decorative teapot.", "the fourth dimension's tax laws.", "a 1980s aerobics instruction video.", "a highly secured box of paperclips.", "Shepard's collection of fish.", "the Citadel Council's worst fears.", "the Borg Queen's dating profile.", "a time-displaced traffic cone.", "a convention of angry Ewoks.", "a rogue Gonk Droid with existential dread.", "the Emperor's new clothes.", "the collected works of William Shatner.", "a deeply philosophical Roomba.", "a highly caffeinated T'ealc.", "the complete history of bad movie sequels.", "a rogue singularity in a coffee pot.", "a perfectly normal office plant.", "the Reapers' primary weakness: glitter.", "the secret recipe for Bantha Blue Milk.", "a Volus aggressively selling insurance.", "the concept of free will and responsibility.", "a stack of overdue library books.", "a highly unstable plasma rifle.",D, "a rogue asteroid that looks like a potato.", "the secret to eternal youth (it's napping).", "a highly secured box of paperclips.", "a surprisingly clean sock.", "a bucket of extremely confusing Legos.", "a convention of angry Ewoks.", "a highly suspicious garden gnome.", "the horrifying implications of a two-way mirror.", "a sentient puddle of water.", "the universal symbol for 'do not touch'.", "a tiny black hole disguised as a button.", "the concept of causality itself.", "a perpetually running clock.", "the collected thoughts of a space slug.", "a discarded pair of socks.", "a highly sensitive mood ring.", "a jar of artisanal pickles.", "a highly secured box of paperclips.", "a rogue Gonk Droid with existential dread.", "the entire USS Enterprise-D crew.", "a highly secured box of paperclips.", "Shepard's collection of fish.", "the Citadel Council's worst fears.", "the Borg Queen's dating profile.", "a time-displaced traffic cone.", "a convention of angry Ewoks.", "a rogue Gonk Droid with existential dread.", "the Emperor's new clothes.", "the collected works of William Shatner.", "a deeply philosophical Roomba.", "a highly caffeinated T'ealc.", "the complete history of bad movie sequels.", "a rogue singularity in a coffee pot.", "a perfectly normal office plant.", "the Reapers' primary weakness: glitter.", "the secret recipe for Bantha Blue Milk.", "a Volus aggressively selling insurance.", "the concept of free will and responsibility.", "a stack of overdue library books.", "a highly unstable plasma rifle.", "a rogue asteroid that looks like a potato.", "the secret to eternal youth (it's napping).", "a highly secured box of paperclips.", "a surprisingly clean sock.", "a bucket of extremely confusing Legos.", "a convention of angry Ewoks.", "a highly suspicious garden gnome.", "the horrifying implications of a two-way mirror.", "a sentient puddle of water.", "the universal symbol for 'do not touch'.", "a tiny black hole disguised as a button.", "the concept of causality itself.", "a perpetually running clock.", "the collected thoughts of a space slug.", "a discarded pair of socks.", "a highly sensitive mood ring.", "a jar of artisanal pickles."];
 
             const CAH_DATA = {
                 blackCards: [
@@ -306,6 +398,50 @@
                 HAND_SIZE: 7, 
             };
 
+            // --- Sabacc Card Definitions ---
+            const SABACC_CARDS = [
+                { name: '1', value: 1 }, { name: '2', value: 2 }, { name: '3', value: 3 }, { name: '4', value: 4 }, { name: '5', value: 5 },
+                { name: '6', value: 6 }, { name: '7', value: 7 }, { name: '8', value: 8 }, { name: '9', value: 9 }, { name: '10', value: 10 },
+                { name: 'Ace', value: 11 }, { name: 'Commander', value: 12 }, { name: 'Mistress', value: 13 },
+                { name: 'Shift (+10/-10)', value: 0, shift: 10 }, 
+                { name: 'Idiot (-1/-15)', value: -1, special: true }, 
+                { name: 'Zero', value: 0 }
+            ];
+            
+            // Generate full Sabacc deck (4 suits of 1-13 + specials)
+            function generateSabaccDeck() {
+                const suits = ['Circle', 'Square', 'Triangle', 'Diamond'];
+                const specials = [{ name: 'Shift (+10/-10)', value: 0, shift: 10 }, { name: 'Idiot (-1/-15)', value: -1, special: true }, { name: 'Zero', value: 0 }];
+                
+                let deck = [];
+                
+                // Add positive/negative number cards (4 of each value)
+                for (const suit of suits) {
+                    for (let i = 1; i <= 10; i++) {
+                        deck.push({ name: `${i} (+${i})`, value: i, suit: suit });
+                        deck.push({ name: `${i} (-${i})`, value: -i, suit: suit });
+                    }
+                    deck.push({ name: 'Ace (+11)', value: 11, suit: suit });
+                    deck.push({ name: 'Ace (-11)', value: -11, suit: suit });
+                    deck.push({ name: 'Commander (+12)', value: 12, suit: suit });
+                    deck.push({ name: 'Commander (-12)', value: -12, suit: suit });
+                    deck.push({ name: 'Mistress (+13)', value: 13, suit: suit });
+                    deck.push({ name: 'Mistress (-13)', value: -13, suit: suit });
+                }
+
+                // Add special cards (one of each)
+                deck.push(...specials);
+                
+                // Shuffle the deck
+                for (let i = deck.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [deck[i], deck[j]] = [deck[j], deck[i]];
+                }
+                
+                return deck;
+            }
+
+
             // --- Game State and Initialization ---
             const INITIAL_STATE = {
                 history: [],
@@ -322,7 +458,15 @@
                 isGameOver: false,
                 blackCard: null,
                 selectedCards: [], 
-                usedBlackCardTexts: []
+                usedBlackCardTexts: [],
+                
+                // Sabacc State
+                sabaccDeck: generateSabaccDeck(),
+                sabaccHand: [],
+                sabaccScore: 0,
+                sabaccBonus: 1.0, // Absurdity Multiplier from Sabacc
+                sabaccAttempted: false,
+                compSabaccBonus: 1.0,
             };
 
             let gameState = { ...INITIAL_STATE }; 
@@ -334,7 +478,9 @@
                 'human-stability-stat': 'stability-item',
                 'computer-health-stat': 'comp-health-item',
                 'computer-standing-stat': 'comp-standing-item',
-                'computer-stability-stat': 'comp-stability-item'
+                'computer-stability-stat': 'comp-stability-item',
+                'sabacc-multiplier': 'sabacc-multiplier-item',
+                'computer-multiplier': 'comp-sabacc-multiplier-item'
             };
 
             const storyHistoryEl = document.getElementById('story-history');
@@ -351,14 +497,27 @@
             const losingSubmissionTitleEl = document.getElementById('losing-submission-title');
             const winningPlayerEl = document.getElementById('winning-player');
             const losingPlayerEl = document.getElementById('losing-player');
+            const humanStabilityStatEl = document.getElementById('human-stability-stat');
             const humanStandingStatEl = document.getElementById('human-standing-stat');
             const humanHealthStatEl = document.getElementById('human-health-stat');
-            const humanStabilityStatEl = document.getElementById('human-stability-stat');
             const handCountEl = document.getElementById('hand-count');
             const computerStatsEl = document.getElementById('computer-stats');
-            const computerStandingStatEl = document.getElementById('computer-standing-stat');
-            const computerHealthStatEl = document.getElementById('computer-health-stat');
-            const computerStabilityStatEl = document.getElementById('computer-stability-stat');
+            const sabaccChallengeBtn = document.getElementById('sabacc-challenge-btn');
+            const sabaccMultiplierEl = document.getElementById('sabacc-multiplier');
+            const computerMultiplierEl = document.getElementById('computer-multiplier');
+            
+            // Sabacc DOM Refs
+            const sabaccOverlayEl = document.getElementById('sabacc-overlay');
+            const sabaccGameContainerEl = document.getElementById('sabacc-game-container');
+            const sabaccScoreEl = document.getElementById('sabacc-score');
+            const sabaccHandAreaEl = document.getElementById('sabacc-hand-area');
+            const sabaccMessageEl = document.getElementById('sabacc-message');
+            const sabaccDrawBtn = document.getElementById('sabacc-draw-btn');
+            const sabaccStayBtn = document.getElementById('sabacc-stay-btn');
+            const sabaccCallBtn = document.getElementById('sabacc-call-btn');
+            const sabaccInfoEl = document.getElementById('sabacc-info');
+            const sabaccExitMsgEl = document.getElementById('sabacc-exit-msg');
+
             const modeSoloBtn = document.getElementById('mode-solo');
             const modeVsComputerBtn = document.getElementById('mode-vs-computer');
 
@@ -385,7 +544,7 @@
 
                 setTimeout(() => {
                     el.classList.remove(className);
-                }, 1000); 
+                }, 1000);
             }
 
 
@@ -415,7 +574,21 @@
                 resetButtonEl.disabled = gameState.currentChapter === 0;
                 
                 const required = gameState.blackCard?.blanks || 1;
-                playCardBtn.disabled = disabled || gameState.selectedCards.length < required;
+                
+                // Main Play Button controls
+                const canPlay = !disabled && gameState.selectedCards.length >= required && gameState.blackCard !== null;
+                playCardBtn.disabled = !canPlay;
+                
+                // Sabacc Button controls
+                sabaccChallengeBtn.disabled = disabled || gameState.sabaccAttempted || gameState.blackCard === null;
+                sabaccChallengeBtn.style.backgroundColor = gameState.sabaccAttempted ? '#4b5563' : '#fbbf24';
+                sabaccChallengeBtn.style.color = gameState.sabaccAttempted ? '#9ca3af' : 'black';
+
+                if (gameState.sabaccAttempted) {
+                    sabaccChallengeBtn.textContent = 'Sabacc Attempted (x' + gameState.sabaccBonus.toFixed(2) + ')';
+                } else {
+                    sabaccChallengeBtn.textContent = 'Attempt Sabacc Challenge';
+                }
             }
 
             function initializeGame() {
@@ -424,6 +597,7 @@
                 gameState = { ...INITIAL_STATE, gameMode: currentMode }; 
                 gameState.currentChapter = 0; 
                 gameState.maxStanding = INITIAL_STATE.humanStanding; 
+                gameState.sabaccDeck = generateSabaccDeck();
                 
                 submissionAreaEl.classList.add('hidden'); 
                 humanSubmissionEl.innerHTML = '';
@@ -436,14 +610,15 @@
                 
                 startGameButtonEl.style.display = 'block';
                 playCardBtn.style.display = 'block';
+                sabaccChallengeBtn.style.display = 'block';
                 
                 isTurnProcessing = false;
                 gameState.isGameOver = false; 
 
-                storyHistoryEl.innerHTML = `<p class="history-text-center msg-info">Welcome, Captain Juno Eclipse. Current Mode: **${currentMode === 'solo' ? 'Solo' : 'Vs. Computer'}**. Combinatorial card potential: **>100 Million**.</p>`;
+                storyHistoryEl.innerHTML = `<p class="history-text-center msg-info">Welcome, Captain Juno Eclipse. Current Mode: **${currentMode === 'solo' ? 'Solo' : 'Vs. Computer'}**. Prepare for temporal chaos!</p>`;
 
                 updateStats();
-                toggleGameControls(false); 
+                toggleGameControls(true); // Disable until started
             }
 
             function startNewGame() {
@@ -457,6 +632,7 @@
                     usedBlackCardTexts: [],
                     maxStanding: INITIAL_STATE.humanStanding
                 };
+                gameState.sabaccDeck = generateSabaccDeck(); // New deck for new game
                 
                 isTurnProcessing = false;
                 submissionAreaEl.classList.add('hidden');
@@ -469,6 +645,7 @@
                 
                 updateStats(); 
                 
+                gameState.humanHand = [];
                 drawHand(gameState.humanHand);
                 if (gameState.gameMode === 'vs-computer') {
                     gameState.computerHand = []; 
@@ -491,7 +668,10 @@
 
             function drawBlackCard() {
                 gameState.currentChapter++;
-                
+                gameState.sabaccBonus = 1.0; 
+                gameState.compSabaccBonus = 1.0;
+                gameState.sabaccAttempted = false;
+
                 let availableCards = CAH_DATA.blackCards.filter(card => !gameState.usedBlackCardTexts.includes(card.text));
                 
                 if (availableCards.length === 0) {
@@ -527,12 +707,15 @@
                     } else if (required === 1) {
                         gameState.selectedCards = [card];
                     } else {
-                        gameState.selectedCards.shift();
+                        // For multi-blank, treat selection as toggle or replacement if maxed
+                        if (gameState.selectedCards.length === required) {
+                            gameState.selectedCards.shift();
+                        }
                         gameState.selectedCards.push(card);
                     }
                 }
 
-                playCardBtn.disabled = (gameState.selectedCards.length < required);
+                toggleGameControls(false);
                 renderStrategyHand();
             }
 
@@ -577,12 +760,18 @@
                         availableCards = availableCards.filter(c => c !== preferredCard);
                     }
                 }
+
+                // AI decides to attempt Sabacc 
+                if (gameState.currentChapter % 3 === 0 && Math.random() < 0.7) {
+                    gameState.compSabaccBonus = Math.random() < 0.5 ? 1.5 : 0.5; // Simulate a decent/bad roll
+                }
                 
                 return selections;
             }
 
-            function calculateTurnOutcome(cardsPlayed) {
+            function calculateTurnOutcome(cardsPlayed, absurdityMultiplier) {
                 const required = gameState.blackCard.blanks || 1;
+                const multiplier = absurdityMultiplier;
 
                 if (cardsPlayed.length < required) {
                     return { finalAbsurdity: 0, standing: 0, health: 0, stability: 0, loreViolation: "Insufficient cards played. Minimum impact.", resultMessage: "ABORTED TURN.", resultClass: 'msg-error', synergyMatchCount: 0, cards: cardsPlayed };
@@ -590,8 +779,8 @@
 
                 const blackCardTheme = gameState.blackCard.theme;
 
-                const totalAbsurdity = cardsPlayed.reduce((sum, card) => sum + card.absurdity, 0);
-                const finalAbsurdity = totalAbsurdity / required;
+                const baseAbsurdity = cardsPlayed.reduce((sum, card) => sum + card.absurdity, 0) / required;
+                const finalAbsurdity = Math.min(5, baseAbsurdity * multiplier); // Cap final absurdity at 5
                 
                 const synergyMatchCount = cardsPlayed.filter(card => card.theme === blackCardTheme).length;
                 const synergyBonus = synergyMatchCount * 5;
@@ -603,29 +792,36 @@
                 let resultMessage = "";
                 let resultClass = "";
 
-                // --- Outcome Logic based on Absurdity ---
-                if (finalAbsurdity >= 4.0) {
-                    stabilityDelta = -15; 
-                    if (Math.random() < 0.6) {
-                        standingDelta = 30; 
+                // --- Outcome Logic based on Absurdity (Scaled by multiplier) ---
+                if (finalAbsurdity >= 4.5) {
+                    stabilityDelta = -18; 
+                    if (Math.random() < 0.7) {
+                        standingDelta = 40; 
                         healthDelta = 0;
-                        loreViolation = "The combined narrative force shattered the enemy's logic core, but the fabric of reality groaned.";
-                        resultMessage = `CRITICAL SUCCESS! +30 Standing! (Base -15 Stability)`;
+                        loreViolation = `Critical Absurdity Injection! Multiplier x${multiplier.toFixed(2)} shattered the Nexus logic core.`;
+                        resultMessage = `CRITICAL SUCCESS! +40 Standing! (Base -18 Stability)`;
                         resultClass = 'msg-success';
                     } else {
-                        standingDelta = -10;
-                        healthDelta = -20; 
-                        stabilityDelta = -40;
+                        standingDelta = -15;
+                        healthDelta = -25; 
+                        stabilityDelta = -45;
                         loreViolation = "The absurdity was too much; a timeline singularity formed and collapsed.";
                         resultMessage = `CATASTROPHIC PARADOX! Major Health and Stability Loss!`;
                         resultClass = 'msg-error';
                     }
-                } else if (finalAbsurdity >= 2.5) {
-                    standingDelta = 15;
+                } else if (finalAbsurdity >= 3.0) {
+                    standingDelta = 20;
                     healthDelta = -5;
                     stabilityDelta = 5;
-                    loreViolation = "An acceptable, mid-level violation. Chaos contained but costly.";
-                    resultMessage = `PARTIAL SUCCESS. +15 Standing, +5 Stability.`;
+                    loreViolation = "An acceptable, high-level violation. Chaos contained but costly.";
+                    resultMessage = `MAJOR SUCCESS. +20 Standing, +5 Stability.`;
+                    resultClass = 'msg-warning';
+                } else if (finalAbsurdity >= 1.5) {
+                    standingDelta = 10;
+                    healthDelta = -10;
+                    stabilityDelta = 10;
+                    loreViolation = "A low-level anomaly was created. The Nexus AI noticed but struggled to correct it.";
+                    resultMessage = `PARTIAL SUCCESS. +10 Standing, +10 Stability.`;
                     resultClass = 'msg-warning';
                 } else {
                     standingDelta = -5;
@@ -665,7 +861,7 @@
                 }
                 
                 isTurnProcessing = true;
-                playCardBtn.disabled = true; 
+                toggleGameControls(true); 
 
                 try {
                     const humanCards = gameState.selectedCards;
@@ -688,7 +884,7 @@
 
 
                     if (gameState.gameMode === 'solo') {
-                        winnerOutcome = calculateTurnOutcome(humanCards);
+                        winnerOutcome = calculateTurnOutcome(humanCards, gameState.sabaccBonus);
                         
                         humanStandingChange = winnerOutcome.standing;
                         humanHealthChange = winnerOutcome.health;
@@ -697,11 +893,15 @@
                         winningSubmission = { cards: humanCards, player: 'Juno' };
 
                     } else { // Vs. Computer Mode Logic
-                        const humanOutcome = calculateTurnOutcome(humanCards);
+                        const humanOutcome = calculateTurnOutcome(humanCards, gameState.sabaccBonus);
                         computerCards = computerPlayCard(); 
-                        const computerOutcome = calculateTurnOutcome(computerCards);
+                        const computerOutcome = calculateTurnOutcome(computerCards, gameState.compSabaccBonus);
                         
-                        const isHumanWinner = humanOutcome.finalAbsurdity >= computerOutcome.finalAbsurdity;
+                        const humanAbsurdityScore = humanOutcome.finalAbsurdity;
+                        const computerAbsurdityScore = computerOutcome.finalAbsurdity;
+
+                        // Winner is determined by higher Absurdity Score
+                        const isHumanWinner = humanAbsurdityScore >= computerAbsurdityScore;
                         
                         let winner, loser, winnerOutcomeFinal;
 
@@ -775,7 +975,7 @@
                     
                     const difficultyMultiplier = 1 + Math.floor((gameState.currentChapter -1) / 5) * 0.15;
                     let synergyMsg = winnerOutcome.synergyMatchCount > 0 
-                        ? `<span class="msg-synergy">(${winnerOutcome.synergyMatchCount}x Lore Synergy: +${winnerOutcome.synergyMatchCount * 5 * difficultyMultiplier} Standing)</span>` 
+                        ? `<span class="msg-synergy">(${winnerOutcome.synergyMatchCount}x Lore Synergy: +${Math.round(winnerOutcome.synergyMatchCount * 5 * difficultyMultiplier)} Standing)</span>` 
                         : '';
 
                     let standingText, healthText, stabilityText, historyMessage;
@@ -786,20 +986,20 @@
                         stabilityText = `Winner (${winningSubmission.player}): ${winnerOutcome.stability > 0 ? '+' : ''}${winnerOutcome.stability} Stability. (Loser: ${LOSER_STABILITY_PENALTY} Stability)`;
 
                         historyMessage = 
-                            `<p class="msg-info">The winning outcome, submitted by <strong>${winningSubmission.player}</strong>: ${completedText}</p>
-                            <p>Avg. Absurdity: ${winnerOutcome.finalAbsurdity.toFixed(1)}/5. ${synergyMsg} Multiverse Impact: ${winnerOutcome.loreViolation}</p>
-                            <p>${standingText} | ${healthText} | ${stabilityText} | Multiplier: x${difficultyMultiplier.toFixed(2)}</p>
-                            <p class="${winnerOutcome.resultClass}">${winnerOutcome.resultMessage}</p>`;
+                            `<div class="history-result"><p class="msg-info">The winning outcome, submitted by <strong>${winningSubmission.player}</strong>: ${completedText}</p>
+                            <p>Final Absurdity: ${winnerOutcome.finalAbsurdity.toFixed(2)}/5 (x${(winningSubmission.player === 'Juno' ? gameState.sabaccBonus : gameState.compSabaccBonus).toFixed(2)} Multiplier). ${synergyMsg} Multiverse Impact: ${winnerOutcome.loreViolation}</p>
+                            <p>${standingText} | ${healthText} | ${stabilityText} | Difficulty: x${difficultyMultiplier.toFixed(2)}</p>
+                            <p class="${winnerOutcome.resultClass}">${winnerOutcome.resultMessage}</p></div>`;
                     } else { // Solo Mode History Message
                         standingText = `Standing: ${humanStandingChange > 0 ? '+' : ''}${humanStandingChange}`;
                         healthText = `Hull: ${humanHealthChange > 0 ? '+' : ''}${humanHealthChange}`;
                         stabilityText = `Stability: ${humanStabilityChange > 0 ? '+' : ''}${humanStabilityChange}`;
 
                         historyMessage = 
-                            `<p class="msg-info">The resulting scenario: ${completedText}</p>
-                            <p>Avg. Absurdity: ${winnerOutcome.finalAbsurdity.toFixed(1)}/5. ${synergyMsg} Multiverse Impact: ${winnerOutcome.loreViolation}</p>
-                            <p>${standingText} | ${healthText} | ${stabilityText} | Multiplier: x${difficultyMultiplier.toFixed(2)}</p>
-                            <p class="${winnerOutcome.resultClass}">${winnerOutcome.resultMessage}</p>`;
+                            `<div class="history-result"><p class="msg-info">The resulting scenario: ${completedText}</p>
+                            <p>Final Absurdity: ${winnerOutcome.finalAbsurdity.toFixed(2)}/5 (x${gameState.sabaccBonus.toFixed(2)} Multiplier). ${synergyMsg} Multiverse Impact: ${winnerOutcome.loreViolation}</p>
+                            <p>${standingText} | ${healthText} | ${stabilityText} | Difficulty: x${difficultyMultiplier.toFixed(2)}</p>
+                            <p class="${winnerOutcome.resultClass}">${winnerOutcome.resultMessage}</p></div>`;
                     }
 
                     gameState.history.push({ role: "result", text: historyMessage });
@@ -849,14 +1049,11 @@
                         isTurnProcessing = false; 
                         
                         renderGame(); 
-                        
-                        playCardBtn.disabled = (gameState.selectedCards.length < (gameState.blackCard.blanks || 1)); 
-                        
                         toggleGameControls(false); 
-                    }, 3500); 
+                    }, 4000); // Increased delay slightly
                 } catch (error) {
                     console.error("Critical error during turn processing:", error);
-                    storyHistoryEl.innerHTML += `<p class="history-result text-sm msg-error">A CRITICAL SCRIPT ERROR OCCURRED! Please reset the campaign. Check console for details.</p>`;
+                    storyHistoryEl.innerHTML += `<div class="history-result text-sm msg-error">A CRITICAL SCRIPT ERROR OCCURRED! Please reset the campaign. Check console for details.</div>`;
                     renderHistory();
                     isTurnProcessing = false; 
                     toggleGameControls(false); 
@@ -904,19 +1101,244 @@
                 blackCardDisplayEl.classList.add('game-over-display');
 
                 playCardBtn.style.display = 'none';
+                sabaccChallengeBtn.style.display = 'none';
                 
                 startGameButtonEl.style.display = 'block';
                 toggleGameControls(false); 
                 resetButtonEl.disabled = false;
             }
 
-            // --- Rendering and UI Updates ---
+            // --- Sabacc Logic ---
+
+            function calculateSabaccScore(hand) {
+                return hand.reduce((sum, card) => sum + card.value, 0);
+            }
+
+            function drawSabaccCard() {
+                if (gameState.sabaccDeck.length === 0) {
+                    gameState.sabaccDeck = generateSabaccDeck(); // Reshuffle if needed
+                    sabaccMessageEl.textContent = 'Sabacc deck reshuffled!';
+                }
+                const card = gameState.sabaccDeck.pop();
+                gameState.sabaccHand.push(card);
+                gameState.sabaccScore = calculateSabaccScore(gameState.sabaccHand);
+                renderSabaccHand();
+                sabaccMessageEl.textContent = '';
+                
+                if (Math.abs(gameState.sabaccScore) > 30) {
+                    endSabaccChallenge('bomb');
+                } else if (Math.abs(gameState.sabaccScore) === 23) {
+                    sabaccCallBtn.disabled = false;
+                    sabaccInfoEl.classList.remove('hidden');
+                } else {
+                    sabaccCallBtn.disabled = true;
+                    sabaccInfoEl.classList.add('hidden');
+                }
+            }
+
+            function sabaccShift() {
+                sabaccMessageEl.textContent = 'Temporal Flux Detected! Sabacc Shift in progress...';
+                
+                let numCardsToShift = Math.floor(Math.random() * gameState.sabaccHand.length) + 1;
+                
+                const shiftedCardIndices = [];
+                while (shiftedCardIndices.length < numCardsToShift) {
+                    const index = Math.floor(Math.random() * gameState.sabaccHand.length);
+                    if (!shiftedCardIndices.includes(index)) {
+                        shiftedCardIndices.push(index);
+                    }
+                }
+                
+                shiftedCardIndices.forEach(index => {
+                    const card = gameState.sabaccHand[index];
+                    
+                    if (card.shift) { 
+                        // Shift/Face Cards: value flips sign
+                        card.value *= -1;
+                    } else if (card.special && card.name === 'Idiot (-1/-15)') {
+                        // Idiot card shifts between -1 and -15
+                        if (card.value === -1) {
+                            card.value = -15;
+                        } else {
+                            card.value = -1;
+                        }
+                    } else if (Math.random() < 0.5) {
+                        // All other cards randomly flip sign
+                        card.value *= -1;
+                    }
+                    card.shifted = true;
+                });
+                
+                gameState.sabaccScore = calculateSabaccScore(gameState.sabaccHand);
+                renderSabaccHand();
+                
+                if (Math.abs(gameState.sabaccScore) > 30) {
+                    setTimeout(() => endSabaccChallenge('bomb'), 1500);
+                } else {
+                    setTimeout(() => {
+                        sabaccMessageEl.textContent = 'Shift complete. Your new score is: ' + gameState.sabaccScore;
+                        sabaccDrawBtn.disabled = false;
+                        sabaccStayBtn.disabled = false;
+                        if (Math.abs(gameState.sabaccScore) === 23) {
+                            sabaccCallBtn.disabled = false;
+                            sabaccInfoEl.classList.remove('hidden');
+                        } else {
+                            sabaccCallBtn.disabled = true;
+                            sabaccInfoEl.classList.add('hidden');
+                        }
+                    }, 1500);
+                }
+            }
+            
+            function startSabaccChallenge() {
+                if (gameState.isGameOver || gameState.sabaccAttempted) return;
+                
+                gameState.sabaccHand = [];
+                gameState.sabaccScore = 0;
+                gameState.sabaccBonus = 1.0;
+                gameState.sabaccDeck = generateSabaccDeck(); // Reset deck for fairness
+                
+                sabaccOverlayEl.classList.remove('hidden');
+                sabaccMessageEl.textContent = 'Draw your first two cards...';
+                sabaccExitMsgEl.classList.add('hidden');
+                
+                // Draw initial two cards
+                drawSabaccCard();
+                drawSabaccCard();
+                
+                sabaccDrawBtn.disabled = false;
+                sabaccStayBtn.disabled = false;
+                sabaccCallBtn.disabled = true;
+                
+                sabaccChallengeBtn.disabled = true;
+                playCardBtn.disabled = true;
+
+                // Focus the modal container for accessibility
+                sabaccGameContainerEl.focus();
+            }
+
+            function endSabaccChallenge(resultType) {
+                // Disable all sabacc buttons
+                sabaccDrawBtn.disabled = true;
+                sabaccStayBtn.disabled = true;
+                sabaccCallBtn.disabled = true;
+                
+                let bonus = 1.0;
+                let outcomeMessage = '';
+                let healthChange = 0;
+                let stabilityChange = 0;
+
+                const finalScore = gameState.sabaccScore;
+                const scoreDelta = Math.abs(finalScore) - 23;
+                
+                if (resultType === 'call' && finalScore === 23) {
+                    bonus = 2.0; // Perfect Sabacc!
+                    outcomeMessage = `**Juno Sabacc!** Perfect 23! Absurdity Multiplier set to x${bonus.toFixed(2)}.`;
+                } else if (resultType === 'call' && finalScore === -23) {
+                    bonus = 2.0; // Perfect Sabacc!
+                    outcomeMessage = `**Juno Sabacc!** Perfect -23! Absurdity Multiplier set to x${bonus.toFixed(2)}.`;
+                } else if (resultType === 'stay') {
+                    if (Math.abs(finalScore) <= 5) {
+                        bonus = 1.5 + (0.5 * (1 - Math.abs(finalScore) / 5)); // 1.5 to 2.0
+                        outcomeMessage = `**Good Hand!** Score of ${finalScore}. Absurdity Multiplier set to x${bonus.toFixed(2)}.`;
+                    } else if (Math.abs(finalScore) <= 15) {
+                        bonus = 1.25; 
+                        outcomeMessage = `**Average Hand.** Score of ${finalScore}. Small Absurdity Multiplier set to x${bonus.toFixed(2)}.`;
+                    } else if (Math.abs(finalScore) <= 25) {
+                        bonus = 1.0;
+                        healthChange = -5;
+                        stabilityChange = -5;
+                        outcomeMessage = `**Junk Hand.** Score of ${finalScore}. Health -5, Stability -5. No multiplier.`;
+                    } else if (Math.abs(finalScore) <= 30) {
+                        bonus = 0.5;
+                        healthChange = -15;
+                        stabilityChange = -10;
+                        outcomeMessage = `**Near Bomb!** Score of ${finalScore}. Major risk! Multiplier x${bonus.toFixed(2)}. Health -15, Stability -10.`;
+                    } else {
+                        // Should be caught by the bomb check, but safety first
+                        resultType = 'bomb';
+                    }
+                }
+                
+                if (resultType === 'bomb') {
+                    bonus = 0.5;
+                    healthChange = -30;
+                    stabilityChange = -20;
+                    outcomeMessage = `**CRITICAL BOMB!** Score of ${finalScore}. The temporal anomaly collapsed your hand. Absurdity Multiplier x${bonus.toFixed(2)}. **Hull -30, Stability -20.**`;
+                    sabaccMessageEl.style.color = DYNAMIC_COLORS.error;
+                } else {
+                    sabaccMessageEl.style.color = DYNAMIC_COLORS.success;
+                }
+                
+                gameState.sabaccBonus = bonus;
+                gameState.sabaccAttempted = true;
+                
+                gameState.humanHealth = capValue(gameState.humanHealth + healthChange);
+                gameState.humanStability = capValue(gameState.humanStability + stabilityChange);
+
+                flashStat('human-health-stat', healthChange);
+                flashStat('human-stability-stat', stabilityChange);
+                
+                sabaccMessageEl.innerHTML = outcomeMessage;
+                sabaccExitMsgEl.classList.remove('hidden');
+
+                // Return to main game after a delay
+                setTimeout(() => {
+                    // Return focus to the button that opened the modal
+                    sabaccChallengeBtn.focus(); 
+                    sabaccOverlayEl.classList.add('hidden');
+                    renderGame();
+                    toggleGameControls(false); 
+                    gameState.history.push({ role: "result", text: `<div class="history-result"><p class="msg-info">**Sabacc Challenge Result**: ${outcomeMessage}</p></div>` });
+                    renderHistory();
+                }, 3000);
+            }
+
+            // --- Sabacc Button Handlers ---
+            sabaccDrawBtn.addEventListener('click', drawSabaccCard);
+            sabaccStayBtn.addEventListener('click', () => {
+                sabaccShift(); // Perform a final shift on Stay
+                endSabaccChallenge('stay');
+            });
+            sabaccCallBtn.addEventListener('click', () => {
+                sabaccShift(); // Perform a final shift on Call
+                endSabaccChallenge('call');
+            });
+            sabaccChallengeBtn.addEventListener('click', startSabaccChallenge);
+
+            // --- Rendering and UI Updates (Modified) ---
+
+            function renderSabaccHand() {
+                sabaccHandAreaEl.innerHTML = '';
+                sabaccScoreEl.textContent = gameState.sabaccScore;
+                
+                gameState.sabaccHand.forEach(card => {
+                    const cardEl = document.createElement('div');
+                    cardEl.classList.add('sabacc-card');
+                    cardEl.textContent = card.value; 
+                    cardEl.setAttribute('aria-label', `${card.name}: ${card.value}`);
+
+                    if (card.shifted) {
+                        cardEl.classList.add('shifted');
+                    }
+                    
+                    const nameEl = document.createElement('div');
+                    nameEl.classList.add('text-xs', 'absolute', 'top-1', 'font-mono');
+                    nameEl.textContent = card.name.split('(')[0].trim();
+                    
+                    cardEl.appendChild(nameEl);
+                    sabaccHandAreaEl.appendChild(cardEl);
+                });
+                
+                sabaccScoreEl.style.color = Math.abs(gameState.sabaccScore) > 23 ? DYNAMIC_COLORS.error : DYNAMIC_COLORS.sabacc;
+            }
 
             function renderSubmission(cards, targetEl) {
                 targetEl.innerHTML = '';
                 cards.forEach(card => {
                     const cardEl = document.createElement('div');
                     cardEl.classList.add('white-card', 'submission-card');
+                    cardEl.style.cursor = 'default'; // Not clickable
 
                     const textDiv = document.createElement('div');
                     textDiv.textContent = card.text;
@@ -947,17 +1369,17 @@
             function renderHistory() {
                 storyHistoryEl.innerHTML = '';
                 gameState.history.forEach(item => {
-                    const p = document.createElement('p');
-                    p.classList.add('text-sm');
-                    
                     if (item.role === 'model') {
-                        p.classList.add('history-model', 'text-white', 'font-bold');
+                        const p = document.createElement('p');
+                        p.classList.add('text-sm', 'history-model', 'text-white', 'font-bold');
                         p.innerHTML = `<strong>${item.text}</strong>`;
+                        storyHistoryEl.appendChild(p);
                     } else if (item.role === 'result') {
-                        p.classList.add('history-result');
-                        p.innerHTML = item.text;
+                        // The history message is already a div, so just append it
+                        const div = document.createElement('div');
+                        div.innerHTML = item.text;
+                        storyHistoryEl.appendChild(div.firstElementChild);
                     }
-                    storyHistoryEl.appendChild(p);
                 });
                 storyHistoryEl.scrollTop = storyHistoryEl.scrollHeight;
             }
@@ -966,25 +1388,38 @@
                 chapterCountEl.textContent = gameState.currentChapter;
                 
                 // Human Stats
+                sabaccMultiplierEl.textContent = `x${gameState.sabaccBonus.toFixed(2)}`;
+                sabaccMultiplierEl.style.color = gameState.sabaccBonus > 1.0 ? DYNAMIC_COLORS.sabacc : gameState.sabaccBonus < 1.0 ? DYNAMIC_COLORS.error : '#9ca3af';
+
+                const updateStatColor = (el, val) => val > 75 ? DYNAMIC_COLORS.success : val < 30 ? DYNAMIC_COLORS.error : DYNAMIC_COLORS.warning;
+                
                 humanStandingStatEl.textContent = `${gameState.humanStanding}/100`;
                 humanHealthStatEl.textContent = `${gameState.humanHealth}%`;
                 humanStabilityStatEl.textContent = `${gameState.humanStability}%`;
                 
-                humanStabilityStatEl.style.color = gameState.humanStability > 75 ? DYNAMIC_COLORS.temporal : gameState.humanStability < 30 ? DYNAMIC_COLORS.error : DYNAMIC_COLORS.warning;
-                humanStandingStatEl.style.color = gameState.humanStanding > 75 ? DYNAMIC_COLORS.success : gameState.humanStanding < 30 ? DYNAMIC_COLORS.error : DYNAMIC_COLORS.warning;
-                humanHealthStatEl.style.color = gameState.humanHealth > 70 ? DYNAMIC_COLORS.success : gameState.humanHealth < 30 ? DYNAMIC_COLORS.error : DYNAMIC_COLORS.warning;
+                humanStabilityStatEl.style.color = updateStatColor(humanStabilityStatEl, gameState.humanStability);
+                humanStandingStatEl.style.color = updateStatColor(humanStandingStatEl, gameState.humanStanding);
+                humanHealthStatEl.style.color = updateStatColor(humanHealthStatEl, gameState.humanHealth);
                 handCountEl.textContent = gameState.humanHand.length; 
 
                 // Computer Stats visibility control 
                 if (gameState.gameMode === 'vs-computer') {
                     computerStatsEl.classList.remove('hidden');
+                    
+                    computerMultiplierEl.textContent = `x${gameState.compSabaccBonus.toFixed(2)}`;
+                    computerMultiplierEl.style.color = gameState.compSabaccBonus > 1.0 ? DYNAMIC_COLORS.sabacc : gameState.compSabaccBonus < 1.0 ? DYNAMIC_COLORS.error : '#9ca3af';
+
+                    const computerStandingStatEl = document.getElementById('computer-standing-stat');
+                    const computerHealthStatEl = document.getElementById('computer-health-stat');
+                    const computerStabilityStatEl = document.getElementById('computer-stability-stat');
+
                     computerStandingStatEl.textContent = `${gameState.computerStanding}/100`;
                     computerHealthStatEl.textContent = `${gameState.computerHealth}%`;
                     computerStabilityStatEl.textContent = `${gameState.computerStability}%`;
 
-                    computerStabilityStatEl.style.color = gameState.computerStability > 75 ? DYNAMIC_COLORS.temporal : gameState.computerStability < 30 ? DYNAMIC_COLORS.error : DYNAMIC_COLORS.warning;
-                    computerStandingStatEl.style.color = gameState.computerStanding > 75 ? DYNAMIC_COLORS.success : gameState.computerStanding < 30 ? DYNAMIC_COLORS.error : DYNAMIC_COLORS.warning;
-                    computerHealthStatEl.style.color = gameState.computerHealth > 70 ? DYNAMIC_COLORS.success : gameState.computerHealth < 30 ? DYNAMIC_COLORS.error : DYNAMIC_COLORS.warning;
+                    computerStabilityStatEl.style.color = updateStatColor(computerStabilityStatEl, gameState.computerStability);
+                    computerStandingStatEl.style.color = updateStatColor(computerStandingStatEl, gameState.computerStanding);
+                    computerHealthStatEl.style.color = updateStatColor(computerHealthStatEl, gameState.computerHealth);
                 } else {
                     computerStatsEl.classList.add('hidden');
                 }
@@ -1016,21 +1451,29 @@
                     if (gameState.isGameOver) return;
 
                     gameState.humanHand.forEach(card => {
-                        const cardEl = document.createElement('div');
+                        // ACCESSIBILITY CHANGE: Changed from <div> to <button>
+                        const cardEl = document.createElement('button');
+                        cardEl.setAttribute('type', 'button'); // Explicitly set type
                         cardEl.classList.add('white-card');
-                        cardEl.title = `Absurdity: ${card.absurdity}/5 | Theme: ${card.theme}`;
+                        
+                        // Create a concise label for screen readers
+                        const ariaLabel = `Card. Theme: ${card.theme}. Absurdity: ${card.absurdity}. Text: ${card.text}`;
+                        cardEl.setAttribute('aria-label', ariaLabel);
 
                         const textDiv = document.createElement('div');
                         textDiv.textContent = card.text;
+                        textDiv.setAttribute('aria-hidden', 'true'); // Hide decorative text from SR
                         
                         const absurdityEl = document.createElement('div');
                         absurdityEl.classList.add('absurdity-rating');
                         absurdityEl.textContent = `Absurdity: ${card.absurdity}/5`;
                         absurdityEl.style.color = getAbsurdityColor(card.absurdity);
+                        absurdityEl.setAttribute('aria-hidden', 'true');
                         
                         const tagDiv = document.createElement('div');
                         tagDiv.classList.add('card-theme-tag');
                         tagDiv.textContent = `Theme: ${card.theme || 'CANON'}`;
+                        tagDiv.setAttribute('aria-hidden', 'true');
                         
                         cardEl.appendChild(textDiv);
                         cardEl.appendChild(absurdityEl);
@@ -1040,8 +1483,10 @@
 
                         if (isSelected) {
                             cardEl.classList.add('selected');
+                            cardEl.setAttribute('aria-pressed', 'true');
                         } else {
                             cardEl.classList.remove('selected');
+                            cardEl.setAttribute('aria-pressed', 'false');
                         }
 
                         cardEl.addEventListener('click', () => {

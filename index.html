@@ -101,42 +101,11 @@
         .black-card { background-color: var(--color-secondary); color: var(--color-text); padding: 20px; border-radius: 8px; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6); }
         .black-card .text-red { color: var(--color-error); font-style: italic; }
 
-        /* White Card (Response) - Now a <button> */
-        .white-card { 
-            background-color: var(--color-card-bg); 
-            color: var(--color-secondary); 
-            padding: 12px; 
-            border-radius: 8px; 
-            border: 1px solid var(--color-card-border); 
-            flex: 1 1 calc(33.333% - 10px); 
-            min-width: 150px; 
-            width: 100%; /* Ensure button fills flex basis */
-            cursor: pointer; 
-            transition: all 0.2s; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between; 
-            font-size: 0.9rem; 
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
-            user-select: none; 
-            text-align: left; /* Override button default center align */
-        }
+        /* White Card (Response) */
+        .white-card { background-color: var(--color-card-bg); color: var(--color-secondary); padding: 12px; border-radius: 8px; border: 1px solid var(--color-card-border); flex: 1 1 calc(33.333% - 10px); min-width: 150px; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; justify-content: space-between; font-size: 0.9rem; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); user-select: none; }
         .absurdity-rating { font-weight: bold; font-size: 0.75rem; padding: 2px 0; }
         .white-card.selected { border: 3px solid var(--color-primary); background-color: #e0f2fe; box-shadow: 0 0 15px var(--color-primary); }
-        .white-card:focus-visible { /* Accessibility outline */
-            outline: 3px solid var(--color-primary);
-            outline-offset: 2px;
-            box-shadow: 0 0 15px var(--color-primary);
-        }
-        
-        .card-theme-tag { 
-            font-size: 0.7rem; 
-            color: #4b5563; /* Improved contrast */
-            text-align: right; 
-            margin-top: 8px; 
-            border-top: 1px dashed #e5e7eb; 
-            padding-top: 5px; 
-        }
+        .card-theme-tag { font-size: 0.7rem; color: #6b7280; text-align: right; margin-top: 8px; border-top: 1px dashed #e5e7eb; padding-top: 5px; }
         
         /* Story History */
         #story-history { max-height: 200px; overflow-y: auto; padding: 10px; border: 1px solid #4b5563; border-radius: 8px; background-color: #2c3545; }
@@ -144,7 +113,7 @@
         #story-history::-webkit-scrollbar-thumb { background: #525252; border-radius: 10px; }
         #story-history::-webkit-scrollbar-track { background: #1f2937; }
         .history-result { padding: 5px; border-left: 4px solid var(--color-primary); background-color: #374151; margin-bottom: 5px; }
-        .msg-info { color: #d1d5db; font-style: italic; } /* Improved contrast */
+        .msg-info { color: #9ca3af; font-style: italic; }
         .msg-success { color: var(--color-success); font-weight: bold; }
         .msg-warning { color: var(--color-warning); font-weight: bold; }
         .msg-error { color: var(--color-error); font-weight: bold; }
@@ -152,38 +121,20 @@
 
         /* Sabacc Modal/Cards */
         #sabacc-game-container { font-family: 'Orbitron', sans-serif; }
-        /* Mobile-first Sabacc cards */
         .sabacc-card { 
             background-color: var(--color-sabacc); 
             color: var(--color-secondary); 
-            width: 64px; height: 96px; /* Smaller size for mobile */
+            width: 80px; height: 120px; 
             border-radius: 8px; 
             display: flex; 
             align-items: center; 
             justify-content: center;
-            font-size: 1.5rem; /* Smaller font */
+            font-size: 2rem; 
             font-weight: 900;
-            border: 3px solid #b45309; /* Thinner border */
-            box-shadow: 0 0 10px rgba(250, 204, 21, 0.6);
+            border: 4px solid #b45309; 
+            box-shadow: 0 0 15px rgba(250, 204, 21, 0.7);
             transition: transform 0.2s;
             cursor: pointer;
-            position: relative; /* For text positioning */
-        }
-        .sabacc-card .text-xs {
-            font-size: 0.65rem;
-        }
-
-        /* Scale up Sabacc cards on larger screens */
-        @media (min-width: 640px) {
-            .sabacc-card {
-                width: 80px; height: 120px; 
-                font-size: 2rem;
-                border-width: 4px;
-                box-shadow: 0 0 15px rgba(250, 204, 21, 0.7);
-            }
-            .sabacc-card .text-xs {
-                font-size: 0.75rem;
-            }
         }
         .sabacc-card-back { background-color: #4c1d95; color: white; font-size: 1.5rem; }
         .sabacc-card.shifted { border-color: var(--color-error); color: var(--color-error); }
@@ -193,16 +144,11 @@
         @media (max-width: 600px) {
             .white-card { flex: 1 1 calc(50% - 10px); }
         }
-        /* Stack cards on very small screens */
-        @media (max-width: 420px) {
-            .white-card { 
-                flex: 1 1 100%; 
-            }
-        }
     </style>
 </head>
 <body>
     
+    <!-- Animated Starfield Background -->
     <div class="starfield" id="starfield"></div>
 
     <div id="game-outer-wrapper">
@@ -213,6 +159,7 @@
                 <p class="text-xl md:text-2xl text-violet-400 font-bold">The Infinite Nexus Sabotage (Sabacc Edition)</p>
             </header>
             
+            <!-- Game Description and Instructions -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
                 
                 <div class="md:col-span-2 space-y-4">
@@ -234,7 +181,8 @@
                 <div class="md:col-span-1 flex justify-center items-start pt-4">
                     <figure class="flex flex-col items-center">
                         <figcaption class="text-center text-sm italic mb-4 text-violet-400">Juno Eclipse prepares a new temporal sabotage</figcaption>
-                        <div class="h-40 w-40 bg-violet-900 rounded-full flex items-center justify-center border-4 border-violet-500 shadow-xl" role="img" aria-label="Stylized icon of a clock inside a circle">
+                        <!-- Placeholder for a stylized image -->
+                        <div class="h-40 w-40 bg-violet-900 rounded-full flex items-center justify-center border-4 border-violet-500 shadow-xl">
                             <svg class="w-24 h-24 text-violet-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                     </figure>
@@ -243,12 +191,15 @@
             
             <hr class="border-violet-700 my-6">
 
+            <!-- --- GAME START --- -->
+            
             <div class="text-center mb-4 flex justify-center space-x-4">
                 <button id="mode-solo" class="selected-mode bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded-full transition-all duration-200">Solo Mode</button>
                 <button id="mode-vs-computer" class="bg-gray-700 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded-full transition-all duration-200">Vs. Computer Mode</button>
             </div>
 
-            <div id="status-bar" role="region" aria-label="Game Status" class="flex flex-col md:flex-row justify-between gap-3 mb-6">
+            <!-- Status Bar -->
+            <div id="status-bar" class="flex flex-col md:flex-row justify-between gap-3 mb-6">
                 <div class="status-block flex-1">
                     <h3 class="font-bold text-lg text-violet-300">Juno Eclipse (You)</h3>
                     <div class="status-item text-sm" id="chapter-item">Chapter: <span id="chapter-count" class="font-mono text-lg text-yellow-300">0</span></div>
@@ -266,12 +217,14 @@
                 </div>
             </div>
             
-            <div id="story-history" role="log" aria-live="polite" class="mb-6 text-sm">
+            <!-- Story History -->
+            <div id="story-history" class="mb-6 text-sm">
                 <p class="history-text-center msg-info">Initializing temporal relay...</p>
             </div>
 
-            <div id="card-area" role="region" aria-label="Main Game Area">
-                <div id="black-card-display" class="black-card mb-4" aria-live="polite">
+            <!-- Card Area -->
+            <div id="card-area">
+                <div id="black-card-display" class="black-card mb-4">
                     <span id="black-card-text" class="text-center font-bold text-lg">Select a mode and start the campaign.</span>
                 </div>
                 
@@ -282,22 +235,24 @@
                     <div id="computer-submission" class="flex flex-wrap gap-2"></div>
                 </div>
                 
-                <div class="flex flex-col sm:flex-row gap-4 mb-4">
-                    <button id="sabacc-challenge-btn" class="bg-yellow-600 hover:bg-yellow-700 text-black w-full sm:w-1/3 py-3 rounded-lg shadow-xl font-extrabold transition-all duration-200" disabled>
+                <!-- Action Buttons: Sabacc vs Play Card -->
+                <div class="flex gap-4 mb-4">
+                    <button id="sabacc-challenge-btn" class="bg-yellow-600 hover:bg-yellow-700 text-black w-1/3 py-3 rounded-lg shadow-xl font-extrabold transition-all duration-200" disabled>
                         Attempt Sabacc Challenge
                     </button>
-                    <button id="play-card-btn" class="play-button bg-violet-600 hover:bg-violet-700 text-white w-full sm:w-2/3 py-3 rounded-lg shadow-xl font-extrabold transition-all duration-200" disabled>
+                    <button id="play-card-btn" class="play-button bg-violet-600 hover:bg-violet-700 text-white w-2/3 py-3 rounded-lg shadow-xl font-extrabold transition-all duration-200" disabled>
                         Play Chosen Card(s)
                     </button>
                 </div>
 
 
                 <h2 id="hand-title" class="hand-title text-violet-400 font-bold text-xl mb-3">Your Hand (<span id="hand-count">0</span> Cards)</h2>
-                <div id="hand-area" aria-labelledby="hand-title" class="flex flex-wrap justify-center gap-3 mb-4"></div>
+                <div id="hand-area" class="flex flex-wrap justify-center gap-3 mb-4"></div>
                 
             </div>
             
-            <div class="action-buttons flex flex-col sm:flex-row justify-between gap-3 mt-6">
+            <!-- Action Buttons -->
+            <div class="action-buttons flex justify-between gap-3 mt-6">
                 <button id="start-game-btn" class="choice-button bg-green-600 hover:bg-green-700 text-white flex-1 py-3 rounded-lg shadow-md font-bold transition-all duration-200">
                     Start New Campaign
                 </button>
@@ -306,21 +261,24 @@
                 </button>
             </div>
 
-            </div>
+            <!-- --- END GAME --- -->
+            
+        </div>
     </div>
     
-    <div id="sabacc-overlay" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden flex items-center justify-center p-4"
-         role="dialog" aria-modal="true" aria-labelledby="sabacc-dialog-title">
-        <div id="sabacc-game-container" tabindex="-1" class="bg-gray-800 p-6 rounded-xl shadow-2xl w-11/12 sm:w-full max-w-md border-4 border-yellow-500">
-            <h2 id="sabacc-dialog-title" class="text-3xl text-center mb-4 text-yellow-400 font-bold">Sabacc Challenge</h2>
+    <!-- --- SABACC CHALLENGE OVERLAY --- -->
+    <div id="sabacc-overlay" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden flex items-center justify-center p-4">
+        <div id="sabacc-game-container" class="bg-gray-800 p-6 rounded-xl shadow-2xl w-full max-w-md border-4 border-yellow-500">
+            <h2 class="text-3xl text-center mb-4 text-yellow-400 font-bold">Sabacc Challenge</h2>
             
             <div class="text-center mb-4 p-3 rounded bg-gray-700">
                 <p class="text-sm text-gray-300">Target: **23** or **-23** | Bomb: Over 30 or Under -30</p>
                 <p class="text-xl font-bold mt-2">Current Score: <span id="sabacc-score" class="text-4xl">0</span></p>
             </div>
 
-            <div id="sabacc-hand-area" class="flex flex-wrap justify-center gap-2 mb-6 min-h-[96px]">
-                </div>
+            <div id="sabacc-hand-area" class="flex flex-wrap justify-center gap-2 mb-6 min-h-[120px]">
+                <!-- Sabacc cards will be rendered here -->
+            </div>
 
             <div id="sabacc-message" class="text-center text-lg text-red-400 font-bold mb-4 min-h-[30px]"></div>
 
@@ -334,6 +292,7 @@
         </div>
     </div>
     
+    <!-- JavaScript Logic (Includes Game Logic and Starfield Initialization) -->
     <script>
         (function() {
             
@@ -372,7 +331,7 @@
 
             const VERBS = ["debating", "flossing", "calibrating", "singing", "disassembling", "negotiating", "interrogating", "replicating", "erasing", "wrestling", "romancing", "attempting to fix", "explaining the plot of", "baking a cake shaped like", "performing interpretive dance for", "wearing a tiny hat while", "shouting obscenities at", "rearranging the contents of", "sincerely apologizing to", "demanding a refund for", "ignoring the advice of", "threatening with a lecture on", "writing a passive-aggressive note about", "secretly admiring", "trying to parallel park with", "getting surprisingly emotional about", "blaming the entire crisis on", "teaching basic calculus to", "forcing everyone to listen to", "engaging in a rap battle with", "performing surgery on", "hiding inside", "arguing with", "carefully cataloging", "enthusiastically greeting", "sincerely regretting", "unnecessarily explaining", "aggressively staring at", "gently caressing", "confidently mispronouncing", "frantically searching for", "relentlessly mocking", "inadvertently activating", "professionally reviewing", "violently shaking", "mysteriously transforming into", "publicly weeping over", "silently judging", "attempting to romance", "inappropriately comparing", "suddenly adopting", "solemnly swearing allegiance to", "dramatically unveiling", "secretly taking pictures of", "overwhelming with kindness", "cynically commenting on", "bravely ignoring", "haphazardly repairing", "meticulously dusting", "unintentionally setting fire to", "enthusiastically destroying", "reluctantly accepting", "politely declining", "accidentally eating", "systematically dismantling", "quietly weeping near", "loudly complaining about", "strategically placing", "magically conjuring", "confusing with poetry", "calmly demanding", "brutally critiquing", "passionately defending", "aggressively cuddling", "desperately attempting to hide", "subtly undermining", "forcefully injecting into", "playfully swatting at", "relentlessly cheering for", "unintentionally insulting", "solemnly burying", "gleefully reanimating", "digitally enhancing", "emotionally supporting", "violently disagreeing with", "awkwardly complimenting", "cautiously approaching", "sarcastically praising", "firmly rejecting", "clumsily knocking over", "carefully balancing", "pointlessly measuring", "uncontrollably giggling at", "patiently waiting for", "dangerously licking", "morally compromising"];
             
-            const CONTEXTS = ["the entire USS Enterprise-D crew.", "a tiny, decorative teapot.", "the fourth dimension's tax laws.", "a 1980s aerobics instruction video.", "a highly secured box of paperclips.", "Shepard's collection of fish.", "the Citadel Council's worst fears.", "the Borg Queen's dating profile.", "a time-displaced traffic cone.", "a convention of angry Ewoks.", "a rogue Gonk Droid with existential dread.", "the Emperor's new clothes.", "the collected works of William Shatner.", "a deeply philosophical Roomba.", "a highly caffeinated T'ealc.", "the complete history of bad movie sequels.", "a rogue singularity in a coffee pot.", "a perfectly normal office plant.", "the Reapers' primary weakness: glitter.", "the secret recipe for Bantha Blue Milk.", "a Volus aggressively selling insurance.", "the concept of free will and responsibility.", "a stack of overdue library books.", "a highly unstable plasma rifle.",D, "a rogue asteroid that looks like a potato.", "the secret to eternal youth (it's napping).", "a highly secured box of paperclips.", "a surprisingly clean sock.", "a bucket of extremely confusing Legos.", "a convention of angry Ewoks.", "a highly suspicious garden gnome.", "the horrifying implications of a two-way mirror.", "a sentient puddle of water.", "the universal symbol for 'do not touch'.", "a tiny black hole disguised as a button.", "the concept of causality itself.", "a perpetually running clock.", "the collected thoughts of a space slug.", "a discarded pair of socks.", "a highly sensitive mood ring.", "a jar of artisanal pickles.", "a highly secured box of paperclips.", "a rogue Gonk Droid with existential dread.", "the entire USS Enterprise-D crew.", "a highly secured box of paperclips.", "Shepard's collection of fish.", "the Citadel Council's worst fears.", "the Borg Queen's dating profile.", "a time-displaced traffic cone.", "a convention of angry Ewoks.", "a rogue Gonk Droid with existential dread.", "the Emperor's new clothes.", "the collected works of William Shatner.", "a deeply philosophical Roomba.", "a highly caffeinated T'ealc.", "the complete history of bad movie sequels.", "a rogue singularity in a coffee pot.", "a perfectly normal office plant.", "the Reapers' primary weakness: glitter.", "the secret recipe for Bantha Blue Milk.", "a Volus aggressively selling insurance.", "the concept of free will and responsibility.", "a stack of overdue library books.", "a highly unstable plasma rifle.", "a rogue asteroid that looks like a potato.", "the secret to eternal youth (it's napping).", "a highly secured box of paperclips.", "a surprisingly clean sock.", "a bucket of extremely confusing Legos.", "a convention of angry Ewoks.", "a highly suspicious garden gnome.", "the horrifying implications of a two-way mirror.", "a sentient puddle of water.", "the universal symbol for 'do not touch'.", "a tiny black hole disguised as a button.", "the concept of causality itself.", "a perpetually running clock.", "the collected thoughts of a space slug.", "a discarded pair of socks.", "a highly sensitive mood ring.", "a jar of artisanal pickles."];
+            const CONTEXTS = ["the entire USS Enterprise-D crew.", "a tiny, decorative teapot.", "the fourth dimension's tax laws.", "a 1980s aerobics instruction video.", "a highly secured box of paperclips.", "Shepard's collection of fish.", "the Citadel Council's worst fears.", "the Borg Queen's dating profile.", "a time-displaced traffic cone.", "a convention of angry Ewoks.", "a rogue Gonk Droid with existential dread.", "the Emperor's new clothes.", "the collected works of William Shatner.", "a deeply philosophical Roomba.", "a highly caffeinated T'ealc.", "the complete history of bad movie sequels.", "a rogue singularity in a coffee pot.", "a perfectly normal office plant.", "the Reapers' primary weakness: glitter.", "the secret recipe for Bantha Blue Milk.", "a Volus aggressively selling insurance.", "the concept of free will and responsibility.", "a stack of overdue library books.", "a highly unstable plasma rifle.", "a rogue asteroid that looks like a potato.", "the secret to eternal youth (it's napping).", "a highly secured box of paperclips.", "a surprisingly clean sock.", "a bucket of extremely confusing Legos.", "a convention of angry Ewoks.", "a highly suspicious garden gnome.", "the horrifying implications of a two-way mirror.", "a sentient puddle of water.", "the universal symbol for 'do not touch'.", "a tiny black hole disguised as a button.", "the concept of causality itself.", "a perpetually running clock.", "the collected thoughts of a space slug.", "a discarded pair of socks.", "a highly sensitive mood ring.", "a jar of artisanal pickles.", "a highly secured box of paperclips.", "a rogue Gonk Droid with existential dread.", "the entire USS Enterprise-D crew.", "a highly secured box of paperclips.", "Shepard's collection of fish.", "the Citadel Council's worst fears.", "the Borg Queen's dating profile.", "a time-displaced traffic cone.", "a convention of angry Ewoks.", "a rogue Gonk Droid with existential dread.", "the Emperor's new clothes.", "the collected works of William Shatner.", "a deeply philosophical Roomba.", "a highly caffeinated T'ealc.", "the complete history of bad movie sequels.", "a rogue singularity in a coffee pot.", "a perfectly normal office plant.", "the Reapers' primary weakness: glitter.", "the secret recipe for Bantha Blue Milk.", "a Volus aggressively selling insurance.", "the concept of free will and responsibility.", "a stack of overdue library books.", "a highly unstable plasma rifle.", "a rogue asteroid that looks like a potato.", "the secret to eternal youth (it's napping).", "a highly secured box of paperclips.", "a surprisingly clean sock.", "a bucket of extremely confusing Legos.", "a convention of angry Ewoks.", "a highly suspicious garden gnome.", "the horrifying implications of a two-way mirror.", "a sentient puddle of water.", "the universal symbol for 'do not touch'.", "a tiny black hole disguised as a button.", "the concept of causality itself.", "a perpetually running clock.", "the collected thoughts of a space slug.", "a discarded pair of socks.", "a highly sensitive mood ring.", "a jar of artisanal pickles."];
 
             const CAH_DATA = {
                 blackCards: [
@@ -508,7 +467,6 @@
             
             // Sabacc DOM Refs
             const sabaccOverlayEl = document.getElementById('sabacc-overlay');
-            const sabaccGameContainerEl = document.getElementById('sabacc-game-container');
             const sabaccScoreEl = document.getElementById('sabacc-score');
             const sabaccHandAreaEl = document.getElementById('sabacc-hand-area');
             const sabaccMessageEl = document.getElementById('sabacc-message');
@@ -610,7 +568,6 @@
                 
                 startGameButtonEl.style.display = 'block';
                 playCardBtn.style.display = 'block';
-                sabaccChallengeBtn.style.display = 'block';
                 
                 isTurnProcessing = false;
                 gameState.isGameOver = false; 
@@ -975,7 +932,7 @@
                     
                     const difficultyMultiplier = 1 + Math.floor((gameState.currentChapter -1) / 5) * 0.15;
                     let synergyMsg = winnerOutcome.synergyMatchCount > 0 
-                        ? `<span class="msg-synergy">(${winnerOutcome.synergyMatchCount}x Lore Synergy: +${Math.round(winnerOutcome.synergyMatchCount * 5 * difficultyMultiplier)} Standing)</span>` 
+                        ? `<span class="msg-synergy">(${winnerOutcome.synergyMatchCount}x Lore Synergy: +${winnerOutcome.synergyMatchCount * 5 * difficultyMultiplier} Standing)</span>` 
                         : '';
 
                     let standingText, healthText, stabilityText, historyMessage;
@@ -986,20 +943,20 @@
                         stabilityText = `Winner (${winningSubmission.player}): ${winnerOutcome.stability > 0 ? '+' : ''}${winnerOutcome.stability} Stability. (Loser: ${LOSER_STABILITY_PENALTY} Stability)`;
 
                         historyMessage = 
-                            `<div class="history-result"><p class="msg-info">The winning outcome, submitted by <strong>${winningSubmission.player}</strong>: ${completedText}</p>
-                            <p>Final Absurdity: ${winnerOutcome.finalAbsurdity.toFixed(2)}/5 (x${(winningSubmission.player === 'Juno' ? gameState.sabaccBonus : gameState.compSabaccBonus).toFixed(2)} Multiplier). ${synergyMsg} Multiverse Impact: ${winnerOutcome.loreViolation}</p>
+                            `<p class="msg-info">The winning outcome, submitted by <strong>${winningSubmission.player}</strong>: ${completedText}</p>
+                            <p>Final Absurdity: ${winnerOutcome.finalAbsurdity.toFixed(2)}/5 (x${gameState.sabaccBonus.toFixed(2)} Multiplier). ${synergyMsg} Multiverse Impact: ${winnerOutcome.loreViolation}</p>
                             <p>${standingText} | ${healthText} | ${stabilityText} | Difficulty: x${difficultyMultiplier.toFixed(2)}</p>
-                            <p class="${winnerOutcome.resultClass}">${winnerOutcome.resultMessage}</p></div>`;
+                            <p class="${winnerOutcome.resultClass}">${winnerOutcome.resultMessage}</p>`;
                     } else { // Solo Mode History Message
                         standingText = `Standing: ${humanStandingChange > 0 ? '+' : ''}${humanStandingChange}`;
                         healthText = `Hull: ${humanHealthChange > 0 ? '+' : ''}${humanHealthChange}`;
                         stabilityText = `Stability: ${humanStabilityChange > 0 ? '+' : ''}${humanStabilityChange}`;
 
                         historyMessage = 
-                            `<div class="history-result"><p class="msg-info">The resulting scenario: ${completedText}</p>
+                            `<p class="msg-info">The resulting scenario: ${completedText}</p>
                             <p>Final Absurdity: ${winnerOutcome.finalAbsurdity.toFixed(2)}/5 (x${gameState.sabaccBonus.toFixed(2)} Multiplier). ${synergyMsg} Multiverse Impact: ${winnerOutcome.loreViolation}</p>
                             <p>${standingText} | ${healthText} | ${stabilityText} | Difficulty: x${difficultyMultiplier.toFixed(2)}</p>
-                            <p class="${winnerOutcome.resultClass}">${winnerOutcome.resultMessage}</p></div>`;
+                            <p class="${winnerOutcome.resultClass}">${winnerOutcome.resultMessage}</p>`;
                     }
 
                     gameState.history.push({ role: "result", text: historyMessage });
@@ -1050,10 +1007,10 @@
                         
                         renderGame(); 
                         toggleGameControls(false); 
-                    }, 4000); // Increased delay slightly
+                    }, 3500); 
                 } catch (error) {
                     console.error("Critical error during turn processing:", error);
-                    storyHistoryEl.innerHTML += `<div class="history-result text-sm msg-error">A CRITICAL SCRIPT ERROR OCCURRED! Please reset the campaign. Check console for details.</div>`;
+                    storyHistoryEl.innerHTML += `<p class="history-result text-sm msg-error">A CRITICAL SCRIPT ERROR OCCURRED! Please reset the campaign. Check console for details.</p>`;
                     renderHistory();
                     isTurnProcessing = false; 
                     toggleGameControls(false); 
@@ -1212,9 +1169,6 @@
                 
                 sabaccChallengeBtn.disabled = true;
                 playCardBtn.disabled = true;
-
-                // Focus the modal container for accessibility
-                sabaccGameContainerEl.focus();
             }
 
             function endSabaccChallenge(resultType) {
@@ -1284,12 +1238,10 @@
 
                 // Return to main game after a delay
                 setTimeout(() => {
-                    // Return focus to the button that opened the modal
-                    sabaccChallengeBtn.focus(); 
                     sabaccOverlayEl.classList.add('hidden');
                     renderGame();
                     toggleGameControls(false); 
-                    gameState.history.push({ role: "result", text: `<div class="history-result"><p class="msg-info">**Sabacc Challenge Result**: ${outcomeMessage}</p></div>` });
+                    gameState.history.push({ role: "result", text: `<p class="msg-info">**Sabacc Challenge Result**: ${outcomeMessage}</p>` });
                     renderHistory();
                 }, 3000);
             }
@@ -1316,7 +1268,6 @@
                     const cardEl = document.createElement('div');
                     cardEl.classList.add('sabacc-card');
                     cardEl.textContent = card.value; 
-                    cardEl.setAttribute('aria-label', `${card.name}: ${card.value}`);
 
                     if (card.shifted) {
                         cardEl.classList.add('shifted');
@@ -1338,7 +1289,6 @@
                 cards.forEach(card => {
                     const cardEl = document.createElement('div');
                     cardEl.classList.add('white-card', 'submission-card');
-                    cardEl.style.cursor = 'default'; // Not clickable
 
                     const textDiv = document.createElement('div');
                     textDiv.textContent = card.text;
@@ -1369,17 +1319,17 @@
             function renderHistory() {
                 storyHistoryEl.innerHTML = '';
                 gameState.history.forEach(item => {
+                    const p = document.createElement('p');
+                    p.classList.add('text-sm');
+                    
                     if (item.role === 'model') {
-                        const p = document.createElement('p');
-                        p.classList.add('text-sm', 'history-model', 'text-white', 'font-bold');
+                        p.classList.add('history-model', 'text-white', 'font-bold');
                         p.innerHTML = `<strong>${item.text}</strong>`;
-                        storyHistoryEl.appendChild(p);
                     } else if (item.role === 'result') {
-                        // The history message is already a div, so just append it
-                        const div = document.createElement('div');
-                        div.innerHTML = item.text;
-                        storyHistoryEl.appendChild(div.firstElementChild);
+                        p.classList.add('history-result');
+                        p.innerHTML = item.text;
                     }
+                    storyHistoryEl.appendChild(p);
                 });
                 storyHistoryEl.scrollTop = storyHistoryEl.scrollHeight;
             }
@@ -1451,29 +1401,21 @@
                     if (gameState.isGameOver) return;
 
                     gameState.humanHand.forEach(card => {
-                        // ACCESSIBILITY CHANGE: Changed from <div> to <button>
-                        const cardEl = document.createElement('button');
-                        cardEl.setAttribute('type', 'button'); // Explicitly set type
+                        const cardEl = document.createElement('div');
                         cardEl.classList.add('white-card');
-                        
-                        // Create a concise label for screen readers
-                        const ariaLabel = `Card. Theme: ${card.theme}. Absurdity: ${card.absurdity}. Text: ${card.text}`;
-                        cardEl.setAttribute('aria-label', ariaLabel);
+                        cardEl.title = `Absurdity: ${card.absurdity}/5 | Theme: ${card.theme}`;
 
                         const textDiv = document.createElement('div');
                         textDiv.textContent = card.text;
-                        textDiv.setAttribute('aria-hidden', 'true'); // Hide decorative text from SR
                         
                         const absurdityEl = document.createElement('div');
                         absurdityEl.classList.add('absurdity-rating');
                         absurdityEl.textContent = `Absurdity: ${card.absurdity}/5`;
                         absurdityEl.style.color = getAbsurdityColor(card.absurdity);
-                        absurdityEl.setAttribute('aria-hidden', 'true');
                         
                         const tagDiv = document.createElement('div');
                         tagDiv.classList.add('card-theme-tag');
                         tagDiv.textContent = `Theme: ${card.theme || 'CANON'}`;
-                        tagDiv.setAttribute('aria-hidden', 'true');
                         
                         cardEl.appendChild(textDiv);
                         cardEl.appendChild(absurdityEl);
@@ -1483,10 +1425,8 @@
 
                         if (isSelected) {
                             cardEl.classList.add('selected');
-                            cardEl.setAttribute('aria-pressed', 'true');
                         } else {
                             cardEl.classList.remove('selected');
-                            cardEl.setAttribute('aria-pressed', 'false');
                         }
 
                         cardEl.addEventListener('click', () => {
